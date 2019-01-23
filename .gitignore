@@ -1,0 +1,12 @@
+# ignore everything unless i told you otherwise
+*
+
+# tracked files
+!.gitignore
+!*.h
+!*.hpp
+!*.c
+!*.cpp
+
+# files in subdirectories
+!*/
