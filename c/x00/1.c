@@ -1,35 +1,51 @@
 #include <unistd.h>
 #include <ncurses.h>
 
-#define COUNT_CLOSE_SEC 20
-#define DEF_COUNT_CLOSE_SEC 15
+#define MAX_COUNT_CLOSE_SEC 12
+#define DEF_COUNT_CLOSE_SEC 12
 
-void count_and_close(int n_count);
+void print_border();
 
 int main()
 {
     initscr();
-    char text[] = "some line to be printed!";
-    char * t = text;
-    while(*t)
-    {
-        addch(*t);
-        t++;
-        refresh();
-        napms(100);
-    }
+
+    print_border();
    
-    count_and_close(DEF_COUNT_CLOSE_SEC);
     endwin();
     return 0;
 }
 
+void print_border()
+{
+    int x = 0;
+    int x_max = getmaxx(stdscr);
+    while(x < x_max)
+    {
+        addch('*');
+        move(0, x++);
+        refresh();
+        napms(50);
+    }
+    x = x_max-1;
+
+    int y = 0;
+    int y_max = getmaxy(stdscr);
+     while(y < y_max)
+    {
+        addch('*');
+        move(y++, x);
+        refresh();
+        napms(50);
+    }
+}
+
 void count_and_close(int n_count)
 {
-    if(n_count > COUNT_CLOSE_SEC)
-        n_count = COUNT_CLOSE_SEC;
+    if(n_count > MAX_COUNT_CLOSE_SEC)
+        n_count = MAX_COUNT_CLOSE_SEC;
     if(n_count < 1)
-        n_count = COUNT_CLOSE_SEC;
+        n_count = MAX_COUNT_CLOSE_SEC;
 
     int x_pos = 0;
     int y_pos = 0;
@@ -40,11 +56,11 @@ void count_and_close(int n_count)
     addstr("The application closes after... ");
     refresh();
     getsyx(y_pos, x_pos);
-    while(n_count > 0)
+    while(n_count > 8)
     {
         move(y_pos, x_pos);
         clrtoeol();
-        mvprintw(y_pos, x_pos, "%d sec", n_count-=2);
+        mvprintw(y_pos, x_pos, "%d sec", n_count-=1);
         refresh();
         napms(1000);
     }
