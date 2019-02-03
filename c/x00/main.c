@@ -1,14 +1,15 @@
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <curses.h>
 
-#define SNAKE_SIZE 6
-static const int FOUR = 4; // four valid_directions to move snake's head
-static const char CH = 'x';
+const int SNAKE_SIZE = 6;
+const int FOUR = 4; // four valid_directions to move snake's head
+const char CH = 'x';
 
 void print_snake();
 
-int main(int argc, char* argv)
+int main(int argc, char** argv)
 {
     initscr();
 
@@ -37,18 +38,30 @@ void init_snake(snake * p_snake);
 void print_snake()
 {
     snake snake_1;
+    printw("before snake init\n");
+    refresh();
+    usleep(500000);
     init_snake(&snake_1);
+    printw("after snake init\nbefore loop\n");
+    refresh();
+    usleep(500000);
+    int i=0,j=0;
     while(true)
     {
         move_snake(&snake_1);
-        napms(100);
+        if((++i % 100) == 0)
+        {
+            mvprintw(1,1,"#%d",j++);
+            refresh();
+        }
+        napms(30);
     }
 }
 
 void init_snake(snake * p_snake)
 {
     int cols, lines;
-    getmaxyx(stdscr, cols, lines);
+    getmaxyx(stdscr, lines, cols);
 
     int x = cols / 2;
     int y = lines / 2;
@@ -74,16 +87,23 @@ void move_snake(snake * p_snake)
 {
     mvdelch(p_snake->snake_points[0].y, p_snake->snake_points[0].x);
 
+    /* 
     memmove(p_snake->snake_points,
             p_snake->snake_points+1, 
             (SNAKE_SIZE-1)*sizeof(point));
+            */
+
+    for(int i=0; i<(SNAKE_SIZE-1); i++)
+    {
+        p_snake->snake_points[i] = p_snake->snake_points[i+1];
+    }
 
     p_snake->snake_points[SNAKE_SIZE-1] = next_move_head(p_snake);
 
     mvaddch(p_snake->snake_points[SNAKE_SIZE-1].y,
             p_snake->snake_points[SNAKE_SIZE-1].x, CH);
-    
-    napms(100);
+    refresh();
+    napms(30);
 }
 
 point next_move_head(snake * p_snake)
@@ -91,37 +111,37 @@ point next_move_head(snake * p_snake)
     point head = p_snake->snake_points[SNAKE_SIZE-1];
     point valid_directions[FOUR];
     
-    int direction_index = 0;
+    int n_directions = 0;
     
     if(is_valid_move(head.x+1, head.y, p_snake))
     {
-        valid_directions[direction_index].x = head.x+1;
-        valid_directions[direction_index].y = head.y;
-        direction_index++;
+        valid_directions[n_directions].x = head.x+1;
+        valid_directions[n_directions].y = head.y;
+        n_directions++;
     }
     if(is_valid_move(head.x-1, head.y, p_snake))
     {
-        valid_directions[direction_index].x = head.x-1;
-        valid_directions[direction_index].y = head.y;
-        direction_index++;
+        valid_directions[n_directions].x = head.x-1;
+        valid_directions[n_directions].y = head.y;
+        n_directions++;
     }
     if(is_valid_move(head.x, head.y+1, p_snake))
     {
-        valid_directions[direction_index].x = head.x;
-        valid_directions[direction_index].y = head.y+1;
-        direction_index++;
+        valid_directions[n_directions].x = head.x;
+        valid_directions[n_directions].y = head.y+1;
+        n_directions++;
     }
     if(is_valid_move(head.x, head.y-1, p_snake))
     {
-        valid_directions[direction_index].x = head.x;
-        valid_directions[direction_index].y = head.y-1;
-        direction_index++;
+        valid_directions[n_directions].x = head.x;
+        valid_directions[n_directions].y = head.y-1;
+        n_directions++;
     }
 
-    if(direction_index == 0)
+    if(n_directions == 0)
         return head;
     
-    int direction_random = rand() % direction_index;
+    int direction_random = rand() % n_directions;
         return valid_directions[direction_random];
 }
 
@@ -130,7 +150,7 @@ bool is_valid_move(int x, int y, snake * p_snake)
     int cols, lines;
     getmaxyx(stdscr, lines, cols);
 
-    if(( (x >= lines) || (x < 0) )  || ( (y >= cols) || (y < 0) ) )
+    if(( (x >= cols) || (x < 0) )  || ( (y >= lines) || (y < 0) ) )
         return false;
 
     point * pts = p_snake->snake_points;
