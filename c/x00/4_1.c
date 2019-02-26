@@ -3,7 +3,11 @@
 #include <unistd.h>
 #include <curses.h>
 
+<<<<<<< HEAD:c/x00/4.c
 #define SNAKE_SIZE 6
+=======
+const int SNAKE_SIZE = 16;
+>>>>>>> 32b9a5c74636d24cc379addbf00bf834e9e613b6:c/x00/main.c
 const int FOUR = 4; // four valid_directions to move snake's head
 const char CH = 'x';
 
@@ -84,7 +88,11 @@ void init_snake(snake * p_snake)
 
 void move_snake(snake * p_snake)
 {
+<<<<<<< HEAD:c/x00/4.c
     point snake_tail = p_snake->snake_points[0];
+=======
+    mvaddch(p_snake->snake_points[0].y, p_snake->snake_points[0].x, ' ');
+>>>>>>> 32b9a5c74636d24cc379addbf00bf834e9e613b6:c/x00/main.c
 
     /* 
     memmove(p_snake->snake_points,
