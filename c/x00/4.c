@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <curses.h>
 
-const int SNAKE_SIZE = 6;
+#define SNAKE_SIZE 6
 const int FOUR = 4; // four valid_directions to move snake's head
 const char CH = 'x';
 
@@ -54,7 +54,7 @@ void print_snake()
             mvprintw(1,1,"#%d",j++);
             refresh();
         }
-        napms(30);
+        napms(500);
     }
 }
 
@@ -68,9 +68,8 @@ void init_snake(snake * p_snake)
 
     point snake_start_point = {x, y};
 
-    point point_to_add = { -1, -1};
     for(int i=0; i<SNAKE_SIZE; ++i)
-        p_snake->snake_points[i] = point_to_add;
+        p_snake->snake_points[i] = snake_start_point;
 
     p_snake->snake_points[0] = snake_start_point;
 
@@ -85,18 +84,21 @@ void init_snake(snake * p_snake)
 
 void move_snake(snake * p_snake)
 {
-    mvdelch(p_snake->snake_points[0].y, p_snake->snake_points[0].x);
+    point snake_tail = p_snake->snake_points[0];
 
     /* 
     memmove(p_snake->snake_points,
             p_snake->snake_points+1, 
             (SNAKE_SIZE-1)*sizeof(point));
-            */
+    */
 
     for(int i=0; i<(SNAKE_SIZE-1); i++)
     {
         p_snake->snake_points[i] = p_snake->snake_points[i+1];
     }
+
+    mvdelch(snake_tail.y, snake_tail.x);
+    refresh();
 
     p_snake->snake_points[SNAKE_SIZE-1] = next_move_head(p_snake);
 
@@ -105,6 +107,7 @@ void move_snake(snake * p_snake)
     refresh();
     napms(30);
 }
+
 
 point next_move_head(snake * p_snake)
 {
