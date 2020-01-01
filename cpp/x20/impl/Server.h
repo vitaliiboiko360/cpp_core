@@ -37,8 +37,8 @@ public:
   }
 
 private:
-  Connection(boost::asio::io_service& io_service)
-    : _socket(io_service)
+  Connection(boost::asio::io_context& io_service)
+    : _socket(io_context)
   {
   }
 
@@ -79,10 +79,18 @@ private:
 class Server
 {
 public:
-  Server(boost::asio::io_service &srv)
-    : _srv(srv)
-    , _socket(srv)
-  {}
+  Server()
+    : _io_context()
+    , _socket(_io_context)
+  {
+    _io_context
+  }
+
+  int run()
+  {
+    _io_context.run();
+    return 0;
+  }
 
   void handle_accept(Connection::pointer connection, const boost::system::error_code& error)
   {
@@ -97,11 +105,11 @@ public:
 private:
     void start_accept()
     {
-        auto connection = Connection::create(_srv);
-        _acceptor.async_accept(connection->socket(), boost::bind(&MyServer::handle_accept, this, connection,  boost::asio::placeholders::error));
+        auto connection = Connection::create(_io_context);
+        _acceptor.async_accept(connection->socket(), boost::bind(&Server::handle_accept, this, connection,  boost::asio::placeholders::error));
     }
 
-  boost::asio::io_service &_srv;
+  boost::asio::io_context _io_context;
   boost::asio::ip::tcp::socket _socket;
   boost::asio::ip::tcp::acceptor _acceptor;
 	

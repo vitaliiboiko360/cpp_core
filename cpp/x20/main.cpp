@@ -15,7 +15,6 @@ int main(int argc, char argv[])
 
     if(args.GetType() == CmdArgs::ApplicationType::Server)
     {
-        boost::
         Server server(argv[1], argv[2]);
         return server.run();
     }

@@ -33,6 +33,8 @@ public:
     {
         return m_type;
     }
+    
+    
 
 private:
     std::vector<std::string> m_Arguments;
@@ -46,7 +48,7 @@ private:
         for(int i=1; i<argc; ++i)
             m_Arguments.push_back({argv[i]});
 
-        if(m_Arguments.size() > 4 || m_Arguments.size() < 2)
+        if(m_Arguments.size() < 2)
             PrintUsageToConsole();
 
         if(m_Arguments[1] == "-c")
