@@ -4,9 +4,9 @@
 
     socketButton.onclick = function () {
         var element = document.getElementById("status");
-        element.innerHTML = "Started clicked";
+        element.innerHTML = "Start clicked";
 
-        var srvConnectionString = "ws://" + window.location.host;
+        var srvConnectionString = "ws://" + window.location.hostname + ':' + `${parseInt(window.location.port)}`;
         var webSocket = new WebSocket(srvConnectionString);
         var testElement = document.getElementById("test");
         testElement.innerHTML = srvConnectionString;
