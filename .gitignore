@@ -13,7 +13,7 @@
 !*/
 
 # ws node package
-*./ws/.*
+ws/
 
 # CMake files
 CMakeLists.txt.user
