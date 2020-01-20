@@ -7,9 +7,13 @@
 !*.hpp
 !*.c
 !*.cpp
+!*.js
 
 # files in subdirectories
 !*/
+
+# ws node package
+*./ws/.*
 
 # CMake files
 CMakeLists.txt.user
