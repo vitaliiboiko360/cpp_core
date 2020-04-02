@@ -14,42 +14,26 @@ function run(request, response)
 }
 
 function router(request, response) {
-    if (request.url === '/client.js')
-    {
-        return handleClientJs(response);
-    }
     if (request.url === '/')
     {
-        return handleIndexJs(response);
+        return readFileAndWriteContent(response, './index.js', 'text/html')
+    }
+    if (request.url === '/client.js')
+    {
+        return readFileAndWriteContent(response, './client.js', 'text/javascript');
     }
 }
 
-function handleIndexJs(response) {
-    fs.readFile('./index.js', function(err, data){
-            
-        if (err) {
+function readFileAndWriteContent(response, fileName, contentType) {
+    fs.readFile(fileName, function(err, data){
+        if(err) {
             response.writeHead(404);
             response.end(JSON.stringify(err));
             return;
         }
-        response.writeHead(200, {'Content-Type': 'text/html'});
+        response.writeHead(200, {'Content-Type': contentType});
         response.write(data);
         response.end();
-    });
-}
-
-function handleClientJs(response) {
-    fs.readFile('./client.js', function(err, data){
-        
-        if (err) {
-            response.writeHead(404);
-            response.end(JSON.stringify(err));
-            return;
-        }
-        response.writeHead(200, {'Content-Type': 'text/javascript'});
-        response.write(data);
-        response.end();
-        return;
     });
 }
 

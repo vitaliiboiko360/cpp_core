@@ -14,21 +14,44 @@ const server = http.createServer();
 // });
 const wss = new WebSocket.Server({ server: server });
 
-wss.on('connection', function(ws) {
+const getRandomUtf8Char = function(desiredLength) {
+  // 0x1F600
+  // 0b00011111011000000000
+  // 128512
+  // last emojii char 0x1f1fc  (+1806)
+  var ret = '';
+  let charCode;
+  const offsetEmojiStarts = 128512;
+  const highBound = 1806;
+  for(let i=0; i<desiredLength; ++i)
+  {
+    charCode = Math.floor(Math.random() * 100000);
+    charCode = charCode % highBound; 
+    charCode = charCode + offsetEmojiStarts;
+    console.log("str: ", ret, " code_added: ", charCode, " String.fromCh...= ", String.fromCharCode(charCode));
+    ret = ret.concat(String.fromCharCode(charCode));
+  }
+  return ret;
+};
+
+const onConnection = function(ws) {
     const id = setInterval(function() {
-      ws.send(JSON.stringify(process.memoryUsage()), function() {
+      let dynLenth = 3 + Math.floor(Math.random() * 7);
+      ws.send(getRandomUtf8Char(dynLenth), function() {
         //
         // Ignore errors.
         //
       });
-    }, 1000);
+    }, 10000);
     console.log('started client interval');
-  
+
     ws.on('close', function() {
       console.log('stopping client interval');
       clearInterval(id);
     });
-  });
+};
+
+wss.on('connection', onConnection);
 
 server.on('request', handler.run);
 
