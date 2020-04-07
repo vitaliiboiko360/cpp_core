@@ -12,6 +12,9 @@
 # files in subdirectories
 !*/
 
+# ignore images
+*/img
+
 # ws node package
 ws/
 
