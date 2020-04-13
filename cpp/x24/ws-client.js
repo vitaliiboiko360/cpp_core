@@ -27,11 +27,9 @@ const getRandomUtf8Char = function(desiredLength) {
         const id = setInterval(function() {
             let dynLenth = 3 + Math.floor(Math.random() * 7);
             ws.send(getRandomUtf8Char(dynLenth), function() {
-              //
-              // Ignore errors.
-              //
+                // data send 
             });
-          }, 10000);
+          }, 5000);
 
         console.log('started client interval');
 
