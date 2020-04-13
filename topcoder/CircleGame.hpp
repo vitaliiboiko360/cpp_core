@@ -44,15 +44,12 @@ public:
                     --i;
                     continue;
                 }
-                int i2 = (i+1) % static_cast<int>(deck.size());
-                int c2 = map(deck[i2]);
-                int s = c1 + c2;
-                if (s == 13)
+                int c2 = map(deck[(i+1) % deck.size()]);
+                if ( (c1+c2)==13 )
                 {
                     wasChanged = true;
                     deck.erase(i, 1);
-                    int sz = deck.size();
-                    if (i == sz)
+                    if ( (i % deck.size()) == 0 )
                     {
                         deck.erase(0, 1);
                         break;
@@ -65,7 +62,8 @@ public:
                 }
             }
         } while (wasChanged);
-        return static_cast<int>(deck.size());
+
+        return deck.size();
     }
 
 };
