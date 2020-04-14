@@ -52,7 +52,6 @@ public:
                     if ( (i % deck.size()) == 0 )
                     {
                         deck.erase(0, 1);
-                        break;
                     }
                     else
                     {

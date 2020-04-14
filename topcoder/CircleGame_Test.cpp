@@ -109,6 +109,11 @@ TEST_CASE("CircleGame - 01")
     str="AKKKKKKKKKT3JJ";
     correct_value=3;
     }
+    SECTION("20")
+    {
+    str="AT2J3Q";
+    correct_value=0;
+    }
 
     CircleGame cg;
     REQUIRE(correct_value == cg.cardsLeft(str));
