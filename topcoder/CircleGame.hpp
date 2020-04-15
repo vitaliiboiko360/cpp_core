@@ -1,14 +1,14 @@
 #include <string>
 #include <iostream>
 #include <cctype>
-
+#include <cstdlib>
 
 class CircleGame
 {
     int map(char c)
     {
         if (std::isdigit(c))
-            return static_cast<int>(c);
+            return std::atoi(&c);
 
         switch (c)
         {
@@ -38,7 +38,7 @@ public:
             {
                 int c1 = map(deck[i]);
                 if (c1 == 13)
-                {;
+                {
                     wasChanged = true;
                     deck.erase(i, 1);   
                     --i;
