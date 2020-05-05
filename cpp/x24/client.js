@@ -25,11 +25,12 @@
 
     var socketCloseButton = document.getElementById("socketCloseButton");
     socketCloseButton.onclick = function() {
-        var element = document.getElementById("status");
-        element.innerHTML = "Close Button clicked";
-
+        var element = document.getElementById("text_1");
+        element.innerText = "Close Button clicked\n";
         closeSocketCounter = closeSocketCounter + 1;
-        console.log('socketCloseButton.onclick: # '.concat(closeSocketCounter));
+        var text = element.innerText;
+        text = text.concat(' socketCloseButton.onclick: # ').concat(closeSocketCounter.toString());
+        element.innerText = text;
     }
 
     function display(msg) {

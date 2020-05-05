@@ -12,6 +12,7 @@
       <p/>
       <p/>
       <button type="button" id="socketCloseButton">Close Socket</button>
+      <p id="text_1"></p>
   </body>
   <script src="./client.js"></script>
 </html>
