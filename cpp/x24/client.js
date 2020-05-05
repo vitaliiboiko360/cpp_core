@@ -3,6 +3,7 @@
     var startSocketCounter = 0;
     var closeSocketCounter = 0;
     var socketButton = document.getElementById("socketButton");
+    var socketId;
 
     socketButton.onclick = function () {
         var element = document.getElementById("status");
@@ -21,6 +22,8 @@
             var msgElement = document.getElementById("message");
             msgElement.innerHTML = event.data;
         };
+
+        socketId = webSocket;
     }
 
     var socketCloseButton = document.getElementById("socketCloseButton");
@@ -31,6 +34,10 @@
         var text = element.innerText;
         text = text.concat(' socketCloseButton.onclick: # ').concat(closeSocketCounter.toString());
         element.innerText = text;
+        if(socketId != undefined)
+        {
+            socketId.close();
+        }
     }
 
     function display(msg) {
