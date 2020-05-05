@@ -32,4 +32,7 @@
         console.log('socketCloseButton.onclick: # '.concat(closeSocketCounter));
     }
 
+    var body = document.getElementsByTagName("body");
+    
+
 })();
