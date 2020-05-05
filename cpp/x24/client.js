@@ -32,7 +32,12 @@
         console.log('socketCloseButton.onclick: # '.concat(closeSocketCounter));
     }
 
-    var body = document.getElementsByTagName("body");
-    
+    function display(msg) {
+        var p = document.createElement('p');
+        p.innerHTML = msg;
+        document.body.appendChild(p);
+    }
+
+    display("The new text from the src client.js");
 
 })();
