@@ -48,4 +48,17 @@
 
     display("The new text from the src client.js");
 
+    var div_1 = document.getElementById("div_1");
+
+    div_1.style.borderStyle = "solid";
+    div_1.style.borderColor = "#000000";
+    div_1.style.borderWidth = "1px";
+    
+    div_1.style.width = (Math.random() * 10 % 50) + 50 + 'px';
+    div_1.style.height = (Math.random() * 10 % 50) + 50 + 'px';
+    window.setInterval(function(){
+        div_1.style.width = (Math.random() * 100 % 50) + 50 + 'px';
+        div_1.style.height = (Math.random() * 100 % 50) + 50 + 'px';
+    }, 1000);
+
 })();

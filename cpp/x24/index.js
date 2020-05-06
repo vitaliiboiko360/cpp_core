@@ -11,6 +11,7 @@
       <p id="message"></p>
       <p/>
       <p/>
+      <div id="div_1"></div>
       <button type="button" id="socketCloseButton">Close Socket</button>
       <p id="text_1"></p>
   </body>
