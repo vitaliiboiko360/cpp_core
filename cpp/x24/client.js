@@ -56,9 +56,11 @@
     
     div_1.style.width = (Math.random() * 10 % 50) + 50 + 'px';
     div_1.style.height = (Math.random() * 10 % 50) + 50 + 'px';
-    window.setInterval(function(){
+
+    var changeRandHeightWidthOfDiv = function(){
         div_1.style.width = (Math.random() * 100 % 50) + 50 + 'px';
         div_1.style.height = (Math.random() * 100 % 50) + 50 + 'px';
-    }, 1000);
+    }
+    window.setInterval(changeRandHeightWidthOfDiv, 1000);
 
 })();
