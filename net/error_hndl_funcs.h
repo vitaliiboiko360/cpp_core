@@ -12,9 +12,7 @@ static void
 terminate(bool use_exit_3)
 {
     char *s;
-
     s = getenv("EF_DUMPCORE");
-
     if (s != NULL && *s != '\0')
         abort();
     else if (use_exit_3)
@@ -31,11 +29,8 @@ output_error(
     va_list ap)
 {
 #define BUF_SIZE 500
-
     char buf[BUF_SIZE], user_msg[BUF_SIZE], err_text[BUF_SIZE];
-
     vsnprintf(user_msg, BUF_SIZE, format, ap);
-
     snprintf(err_text, BUF_SIZE, " [%s]", strerror(err));
     snprintf(buf, BUF_SIZE, "ERROR%s %s\n", err_text, user_msg);
     fflush(stdout);
@@ -47,11 +42,8 @@ void
 error_exit_en(int err_num, const char* format, ...)
 {
     va_list arg_list;
-
     va_start(arg_list, format);
-
     output_error(err_num, format, arg_list);
-
     va_end(arg_list);
     terminate(true);
 }
@@ -60,10 +52,8 @@ void
 error_exit(const char* format, ...)
 {
     va_list arg_list;
-
     va_start(arg_list, format);
     output_error(errno, format, arg_list);
     va_end(arg_list);
-
     terminate(true);
 }
