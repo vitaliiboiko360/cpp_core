@@ -1,2 +1,2 @@
 # cpp_core
-learn and apply practical code
+apply practical code
