@@ -2,6 +2,10 @@
 #include <sys/un.h>
 #include <sys/socket.h>
 
+#include <cstdio>
+#include <iostream>
+#include <unistd.h>
+
 #include "error_hndl_funcs.h"
 
 int main(int argc, char* argv[])
@@ -15,7 +19,9 @@ int main(int argc, char* argv[])
 
     sfd = socket(AF_UNIX, SOCK_STREAM, 0);
     if(sfd == -1)
-        error_exit("socket");
+    {
+       error_exit("socket");
+    }
 
     memset(&addr, 0, sizeof(struct sockaddr_un));
     addr.sun_family = AF_UNIX;
@@ -23,8 +29,20 @@ int main(int argc, char* argv[])
 
     if (bind(sfd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) == -1)
     {
-        error_exit("bind");
+        std::cout<<"errno= "<<errno<<"\n";
+        if (errno == EADDRINUSE)
+        {
+            std::cout<<"address \""<<SOCKNAME<<"\" in use\n";   
+            unlink(SOCKNAME);
+        }
+        if (bind(sfd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) == -1)
+        {
+            error_exit("bind");
+        }
     }
+
+    std::cout<<"bind called\n";
+    getc(stdin);
 
     return 0;
 }
