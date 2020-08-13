@@ -1,48 +1,31 @@
 
-#include <sys/un.h>
-#include <sys/socket.h>
 
-#include <cstdio>
+#include "server.h"
+
 #include <iostream>
-#include <unistd.h>
-
-#include "error_hndl_funcs.h"
 
 int main(int argc, char* argv[])
-{
-
-    const char *SOCKNAME = "/tmp/socket_a";
-
-    int sfd;
-
-    struct sockaddr_un addr;
-
-    sfd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if(sfd == -1)
+{   
+    int j = 0; 
+    char c;
+    for(int i=0; i<argc; ++i)
     {
-       error_exit("socket");
+        while ((c = argv[i][j++]) != 0)
+        {
+            std::cout<<c;
+        }
+        std::cout<<std::endl;
     }
 
-    memset(&addr, 0, sizeof(struct sockaddr_un));
-    addr.sun_family = AF_UNIX;
-    strncpy(addr.sun_path, SOCKNAME, sizeof(addr.sun_path) - 1);
-
-    if (bind(sfd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) == -1)
+    if (argc > 0 && 
+        *argv[0] == '-')
     {
-        std::cout<<"errno= "<<errno<<"\n";
-        if (errno == EADDRINUSE)
+        if (argv[0][1] == 's')
         {
-            std::cout<<"address \""<<SOCKNAME<<"\" in use\n";   
-            unlink(SOCKNAME);
-        }
-        if (bind(sfd, (struct sockaddr *) &addr, sizeof(struct sockaddr_un)) == -1)
-        {
-            error_exit("bind");
+            u_server server;
+            return server.run();
         }
     }
-
-    std::cout<<"bind called\n";
-    getc(stdin);
 
     return 0;
 }
