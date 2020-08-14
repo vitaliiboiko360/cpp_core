@@ -10,17 +10,13 @@ int main(int argc, char* argv[])
     char c;
     for(int i=0; i<argc; ++i)
     {
-        while ((c = argv[i][j++]) != 0)
-        {
-            std::cout<<c;
-        }
-        std::cout<<std::endl;
+        std::cout<<argv[i]<<std::endl;
     }
 
-    if (argc > 0 && 
-        *argv[0] == '-')
+    if (argc > 1 && 
+        *argv[1] == '-')
     {
-        if (argv[0][1] == 's')
+        if (argv[1][1] == 's')
         {
             u_server server;
             return server.run();
