@@ -1,6 +1,7 @@
 
 
 #include "server.h"
+#include "client.h"
 
 #include <iostream>
 
@@ -22,6 +23,17 @@ int main(int argc, char* argv[])
             return server.run();
         }
     }
+
+    if (argc > 1 && 
+        *argc[1] == '-')
+    {
+        if (argv[1][1] == 'c')
+        {
+            u_client client;
+            return client.run();
+        }
+    }
+
 
     return 0;
 }
