@@ -12,6 +12,8 @@
 int u_server::run()
 {
     const char *SOCKNAME = "/tmp/socket_a";
+    const int BACKLOG = 5;
+    const int BUF_SZ = 256;
 
     int sfd;
 
@@ -42,7 +44,34 @@ int u_server::run()
     }
 
     std::cout<<"bind called\n";
-    getc(stdin);
+    
+    if (listen(sfd, BACKLOG) == -1)
+        error_exit("listen");
+
+   
+    ssize_t bytes_read;
+    char buffer[BUF_SZ];
+    int cfd = 0;
+    for (;;)
+    {
+        cfd = accept(sfd, NULL, NULL);
+        if (cfd == -1)
+            error_exit("accept");
+        
+        while((bytes_read = read(cfd, buffer, BUF_SZ)) > 0)
+        {
+            if(write(STDOUT_FILENO, buffer, bytes_read) != bytes_read)
+                error_exit("partial/failed write");
+            
+            if (bytes_read == -1)
+                error_exit("read");
+
+            if(close(cfd) == -1)
+                error_exit("close");
+        }
+
+    }
+
 
     return 0;
 }
