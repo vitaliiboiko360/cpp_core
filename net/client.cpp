@@ -1,6 +1,7 @@
 
 #include <sys/un.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #include "client.h"
 #include "error_hndl_funcs.h"
@@ -26,7 +27,7 @@ int u_client::run()
     addr.sun_family = AF_UNIX;
     strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
 
-    if(connect(sfd, (struct socketaddr_un *)&addr, sizeof(struct socketaddr_un)) == -1)
+    if(connect(sfd, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) == -1)
         error_exit("connect");
     
     while((bytes_read = read(STDIN_FILENO, buffer, BUF_SZ)) > 0)
