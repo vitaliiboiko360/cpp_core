@@ -69,9 +69,7 @@ int u_server::run()
             if(close(cfd) == -1)
                 error_exit("close");
         }
-
     }
-
-
+    
     return 0;
 }
