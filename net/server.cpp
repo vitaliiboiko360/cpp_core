@@ -52,8 +52,10 @@ int u_server::run()
     ssize_t bytes_read;
     char buffer[BUF_SZ];
     int cfd = 0;
+    int i = 0;
     for (;;)
     {
+        std::cout<<"# "<<i<<"\n";
         cfd = accept(sfd, NULL, NULL);
         if (cfd == -1)
             error_exit("accept");
@@ -62,13 +64,16 @@ int u_server::run()
         {
             if(write(STDOUT_FILENO, buffer, bytes_read) != bytes_read)
                 error_exit("partial/failed write");
-            
-            if (bytes_read == -1)
-                error_exit("read");
-
-            // if(close(cfd) == -1)
-            //     error_exit("close");
         }
+
+
+        if (bytes_read == -1)
+            error_exit("read");
+
+        if(close(cfd) == -1)
+             error_exit("close");
+
+        ++i;
     }
     
     return 0;
