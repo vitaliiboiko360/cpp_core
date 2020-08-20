@@ -1,3 +1,5 @@
+#include "error_hndl_funcs.h"
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdarg.h>

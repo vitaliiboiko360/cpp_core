@@ -2,5 +2,5 @@
 class u_client
 {
 public:
-    int run();
+    int run_stream_cli();
 };

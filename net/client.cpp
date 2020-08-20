@@ -8,7 +8,7 @@
 #include "client.h"
 #include "error_hndl_funcs.h"
 
-int u_client::run()
+int u_client::run_stream_cli()
 {
     struct sockaddr_un addr;
 

@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
         if (argv[1][1] == 's')
         {
             u_server server;
-            return server.run();
+            return server.run_stream_server();
         }
     }
 
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
         if (argv[1][1] == 'c')
         {
             u_client client;
-            return client.run();
+            return client.run_stream_cli();
         }
     }
 

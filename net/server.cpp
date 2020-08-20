@@ -9,14 +9,58 @@
 
 #include "error_hndl_funcs.h"
 
-int u_server::run()
+const int BUF_SIZE = 256;
+const char* SOCKNAME = "/tmp/socket_a";
+
+int u_server::run_dtgrm_srv()
 {
-    const char *SOCKNAME = "/tmp/socket_a";
-    const int BACKLOG = 5;
-    const int BUF_SZ = 256;
-
+    struct sockaddr_un svr_addr, cli_addr;
     int sfd;
+    ssize_t num_bytes;
+    socklen_t socket_length;
 
+    char buffer[BUF_SIZE];
+
+    sfd = socket(AF_UNIX, SOCK_DGRAM, 0);
+    if (sfd == -1)
+        error_exit("socket");
+
+    if(strlen(SOCKNAME) > sizeof(svr_addr.sun_path) - 1)
+        error_exit("server socket path too long: %s", SOCKNAME);
+    
+    if(remove(SOCKNAME) == -1 && errno != ENOENT)
+        error_exit("remove-%s", SOCKNAME);
+    
+    memset(&svr_addr, 0, sizeof(struct sockaddr_un));
+    svr_addr.sun_family = AF_UNIX;
+    strncpy(svr_addr.sun_path, SOCKNAME, sizeof(struct sockaddr_un) - 1);
+
+    for(;;)
+    {
+        socket_length = sizeof(struct sockaddr_un);
+        num_bytes = recvfrom(sfd, buffer, BUF_SIZE, 0, (struct sockaddr *)&cli_addr, &socket_length);
+
+        if(num_bytes == -1)
+            error_exit("recvfrom");
+        
+        printf("Server recieved %ld bytes from %s\n", (long)num_bytes, cli_addr.sun_path);
+
+        for (int i=0; i<num_bytes; i++)
+        {
+            buffer[i] = toupper((unsigned char) buffer[i]);
+        }
+
+        if(sendto(sfd, buffer, num_bytes, 0, (struct sockaddr *)&cli_addr, socket_length))
+            error_exit("sendto");
+    }
+
+    return 0;
+}
+
+int u_server::run_stream_server()
+{
+    const int BACKLOG = 5;
+    int sfd;
     struct sockaddr_un addr;
 
     sfd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -50,7 +94,7 @@ int u_server::run()
 
    
     ssize_t bytes_read;
-    char buffer[BUF_SZ];
+    char buffer[BUF_SIZE];
     int cfd = 0;
     int i = 0;
     for (;;)
@@ -60,12 +104,11 @@ int u_server::run()
         if (cfd == -1)
             error_exit("accept");
         
-        while((bytes_read = read(cfd, buffer, BUF_SZ)) > 0)
+        while((bytes_read = read(cfd, buffer, BUF_SIZE)) > 0)
         {
             if(write(STDOUT_FILENO, buffer, bytes_read) != bytes_read)
                 error_exit("partial/failed write");
         }
-
 
         if (bytes_read == -1)
             error_exit("read");
