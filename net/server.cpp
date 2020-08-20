@@ -66,8 +66,8 @@ int u_server::run()
             if (bytes_read == -1)
                 error_exit("read");
 
-            if(close(cfd) == -1)
-                error_exit("close");
+            // if(close(cfd) == -1)
+            //     error_exit("close");
         }
     }
     
