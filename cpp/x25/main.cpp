@@ -2,10 +2,20 @@
 #include <iostream>
 #include <thread>
 
+#include "application.h"
+
 int main(int argc, char* argv[])
 {
 
-   std::cout<<std::this_thread::get_id()<<"\n";
+   
+    application app;
+    if(app.run())
+        std::cout<<"Success\n";
+    else
+    {
+        std::cout<<"There was errors\n";
+    }
+    
                                                                                                                                                                                                                                                                         
     return 0;
 }
