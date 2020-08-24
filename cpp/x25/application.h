@@ -3,13 +3,5 @@
 class application
 {
 public:
-    bool run()
-    {
-
-
-
-
-
-
-    }
+    bool run();
 };
