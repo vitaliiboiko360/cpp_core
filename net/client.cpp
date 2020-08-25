@@ -11,6 +11,27 @@
 const int BUF_SZ = 256;
 const char* socket_path = "/tmp/socket_a";
 
+int u_client::run_echo_cli()
+{
+    char buffer[BUF_SZ];
+    int num_bytes;
+    for(;;)
+    {
+        num_bytes = read(STDIN_FILENO, buffer, BUF_SZ);
+        if (num_bytes == -1)
+        {
+            perror("read");
+            exit(EXIT_FAILURE);
+        }
+        num_bytes = write(STDOUT_FILENO, buffer, num_bytes);
+        if (num_bytes == -1)
+        {
+            perror("write");
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
 int u_client::run_dtgrm_cli()
 {
     struct sockaddr_un srv_addr, cli_addr;
