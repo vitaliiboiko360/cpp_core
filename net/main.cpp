@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
         if (argv[1][1] == 'c')
         {
             u_client client;
-            return client.run_echo_cli();
+            return client.run_dtgrm_cli();
         }
     }
 
