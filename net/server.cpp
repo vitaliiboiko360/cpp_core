@@ -57,7 +57,7 @@ int u_server::run_dtgrm_srv()
             buffer[i] = toupper((unsigned char) buffer[i]);
         }
 
-        if(sendto(sfd, buffer, num_bytes, 0, (struct sockaddr *)&cli_addr, socket_length))
+        if(sendto(sfd, buffer, num_bytes, 0, (struct sockaddr *)&cli_addr, socket_length) != num_bytes)
             error_exit("sendto");
     }
 
