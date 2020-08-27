@@ -1,18 +1,18 @@
 #include <set>
 #include <iostream>
+#include <limits>
 #include <cstdlib>
 #include "application.h"
 
-const int REAZONABLE_SIZE = 256;
+//const int CHAR_BIT = 25;
 
 bool application::run()
 {
-
     std::set<int> local_set;
 
-    for(int i=0; i<REAZONABLE_SIZE; ++i)
+    for(int i=0; i<__SCHAR_MAX__/__CHAR_BIT__; ++i)
     {
-        local_set.insert(std::rand() % (REAZONABLE_SIZE*2));
+        local_set.insert(std::rand() % (__SCHAR_MAX__/__CHAR_BIT__*2));
     }
 
     for(auto& i : local_set)
