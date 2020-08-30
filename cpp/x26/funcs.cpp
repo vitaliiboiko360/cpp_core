@@ -3,9 +3,20 @@
 #include <cstdlib>
 #include <fstream>
 #include <vector>
+#include <iostream>
+#include <thread>
+
+namespace 
+{
+    void print_thread_info()
+    {
+        std::cout<<"#"<<std::this_thread::get_id()<<"\n";
+    }
+}
 
 int save_file(const std::string& file_name)
 {
+    print_thread_info();
     std::ofstream file{file_name};
 
     for(int i=0; i<1000; i++)
@@ -17,6 +28,7 @@ int save_file(const std::string& file_name)
 
 int read_file(const std::string& file_name)
 {
+    print_thread_info();
     std::ifstream file;
     file.open(file_name);
     if (!file.is_open())
@@ -28,4 +40,12 @@ int read_file(const std::string& file_name)
     {
         numbers.push_back(number);
     }
+
+    int max_value = 0;
+    for(auto& i : numbers)
+    {
+        if (i > max_value)
+            max_value = i;
+    }
+    std::cout<<"max value is "<<max_value<<"\n";
 }
