@@ -12,6 +12,13 @@ int main(int argc, char* argv[])
     t[0] = std::thread(save_file, "file_1");
     t[1] = std::thread(read_file, "file_1");
 
+    
+    t[0].join();
+    t[1].join();
+    
+    t[0] = std::thread(save_file, "file_2");
+    t[1] = std::thread(read_file, "file_2");
+
     t[0].join();
     t[1].join();
 }
