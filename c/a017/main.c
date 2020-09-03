@@ -17,9 +17,16 @@ void* generate_random_stream(void* arg)
 {
     int current_size = 0;
     char buffer[BUFFER_SIZE];
+    int bytes_read = 0;
     while(1)
     {
-        current_size += snprintf(buffer+current_size, max(0, BUFFER_SIZE-current_size), "%d ", rand());
+        bytes_read = snprintf(buffer+current_size, max(0, BUFFER_SIZE-current_size), "%d ", rand());
+        if (bytes_read == -1)
+        {
+            perror("snprintf");
+            break;
+        }
+        current_size += bytes_read;
         //sleep(1);
 
         if(current_size > BUFFER_SIZE*3/4)
@@ -37,10 +44,10 @@ int main(int argc, char* argv[])
     pthread_create(&t1, NULL, &generate_random_stream, NULL);
 
     int i=0;
-    while(i++ > 10);
+    while(i++ > 3);
     {
         printf("main\n");
-        sleep(2);
+        sleep(1);
     }
 
     int result = 0;
