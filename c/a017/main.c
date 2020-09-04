@@ -18,13 +18,14 @@ void* generate_random_stream(void* arg)
     int current_size = 0;
     char buffer[BUFFER_SIZE];
     int bytes_read = 0;
+    int counter = 0;
     while(1)
     {
         bytes_read = snprintf(buffer+current_size, max(0, BUFFER_SIZE-current_size), "%d ", rand());
         if (bytes_read == -1)
         {
             perror("snprintf");
-            break;
+            return -1;
         }
         current_size += bytes_read;
         //sleep(1);
@@ -34,7 +35,11 @@ void* generate_random_stream(void* arg)
             printf("%s \n", buffer);
             current_size = 0;
         }
+
+        if (counter++ > 1000)
+            break;
     }
+    return 0;
 }
 
 int main(int argc, char* argv[])
