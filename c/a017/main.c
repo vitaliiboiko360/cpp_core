@@ -21,7 +21,7 @@ void* generate_random_stream(void* arg)
     int bytes_read = 0;
     int counter = 0;
     const int iteration_limit = 1000;
-    while(counter++ < iteration_limit)
+    while(1)
     {
         bytes_read = snprintf(buffer+current_size, max(0, BUFFER_SIZE-current_size), "%d ", rand());
         if (bytes_read == -1)
@@ -32,7 +32,7 @@ void* generate_random_stream(void* arg)
         current_size += bytes_read;
         //sleep(1);
 
-        if(current_size > BUFFER_SIZE*3/4 && counter == iteration_limit)
+        if(current_size > BUFFER_SIZE*3/4)
         {
             printf("%s \n", buffer);
             current_size = 0;
@@ -52,11 +52,13 @@ int main(int argc, char* argv[])
     char str_1[size_1];
     memset(&str_1, '-', size_1);
     str_1[size_1] = '\0';
+
     int i=0;
-    while(i++ < 10);
+    while(++i < 10)
     {
-        printf("MSG from main %d \n%s\n", i, str_1);
         sleep(1);
+        printf("MSG from main %d \n%s\n", i, str_1);
+        
     }
 
     int result = 0;
