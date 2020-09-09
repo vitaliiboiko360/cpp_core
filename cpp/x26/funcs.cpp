@@ -28,7 +28,6 @@ int save_file(const std::string& file_name)
 
 int read_file(const std::string& file_name)
 {
-    print_thread_info();
     std::ifstream file;
     file.open(file_name);
     if (!file.is_open())
@@ -47,5 +46,6 @@ int read_file(const std::string& file_name)
         if (i > max_value)
             max_value = i;
     }
-    std::cout<<"max value is "<<max_value<<"\n";
+    print_thread_info();
+    std::cout<<"max value in file: "<<file_name<<" is "<<max_value<<"\n";
 }

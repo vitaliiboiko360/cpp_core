@@ -23,7 +23,7 @@ void* generate_random_stream(void* arg)
     printf("before loop in thread\n");
 
     int i = 0;
-    while(i++ < 3)
+    while(i++ < 7)
     {
         while (current_size < BUFFER_SIZE*3/4)
         {
