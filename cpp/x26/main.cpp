@@ -18,8 +18,8 @@ int main(int argc, char* argv[])
     t[0] = std::thread(l, "file_1");
     t[1] = std::thread(l, "file_2");
 
-    t[0].join();
-    t[1].join();
+    t[0].detach();
+    t[1].detach();
 
     t[0] = std::thread(l, "file_3");
     t[1] = std::thread(l, "file_4");

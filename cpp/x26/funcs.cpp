@@ -5,18 +5,18 @@
 #include <vector>
 #include <iostream>
 #include <thread>
+#include <sstream>
 
 namespace 
 {
-    void print_thread_info()
+    void print_out_string(std::string str)
     {
-        std::cout<<"#"<<std::this_thread::get_id()<<"\n";
+        std::cout << std::this_thread::get_id() << " " << str << std::endl;
     }
 }
 
 int save_file(const std::string& file_name)
 {
-    print_thread_info();
     std::ofstream file{file_name};
 
     for(int i=0; i<1000; i++)
@@ -24,6 +24,10 @@ int save_file(const std::string& file_name)
         file << std::rand() << " ";
     }
     file.close();
+
+    std::stringstream ss;
+    ss << "saved file: "<<file_name;
+    print_out_string(ss.str());
 }
 
 int read_file(const std::string& file_name)
@@ -46,6 +50,8 @@ int read_file(const std::string& file_name)
         if (i > max_value)
             max_value = i;
     }
-    print_thread_info();
-    std::cout<<"max value in file: "<<file_name<<" is "<<max_value<<"\n";
+    
+    std::stringstream ss;
+    ss << "max value in file: "<<file_name<<" is "<<max_value;
+    print_out_string(ss.str());
 }
