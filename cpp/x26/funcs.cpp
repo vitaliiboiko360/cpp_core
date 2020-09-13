@@ -9,7 +9,7 @@
 
 namespace 
 {
-    void print_out_string(std::string str)
+    void print_out_string(const std::string& str)
     {
         std::cout << std::this_thread::get_id() << " " << str << std::endl;
     }
