@@ -24,7 +24,7 @@ void thread_function(int arg)
 int main(int argc, char* argv[])
 {
 
-    int number = 500;
+    int number = 50;
 
     std::thread thread_1(thread_function, number);   
     for(int i=0; i<number; i++)
@@ -32,7 +32,9 @@ int main(int argc, char* argv[])
         std::cout<<"main i="<<i<<"\n";
         busy_work();
     }
-    thread_1.join();
+    thread_1.detach();
+    if(thread_1.joinable())
+        thread_1.join();
 
     return 0;
 }
