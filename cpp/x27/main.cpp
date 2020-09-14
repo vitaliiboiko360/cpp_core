@@ -1,40 +1,34 @@
 #include <iostream>
 #include <thread>
+#include <string>
+#include <cstdlib>
 
-void busy_work()
+void fill_string(int limit, std::string& str)
 {
-    int acc;
-    for(int i=0; i<__INT16_MAX__; i++)
-    {   
-        if (acc % 2 ==0)
-            acc += i;
+    if (limit <= 0)
+        return;
+    for(int i=0; i<limit; ++i)
+    {
+        str.push_back(static_cast<char>((std::rand() % 25) + 87));
     }
 }
 
-void thread_function(int arg)
+void thread_function(std::string& str)
 {
-    std::cout<<"this thread would count to number \"arg\"= "<<arg<<"\n";
-    for(int i=0; i<arg; i++)
-    {
-        std::cout<<"i= "<<i<<"\n";
-        busy_work();
-    }
+    std::cout<<"thread recieved str:\n"<<str<<"\n";
 }
 
 int main(int argc, char* argv[])
 {
 
     int number = 50;
+    std::string str;
+       
+    std::thread thread_1(fill_string, number, std::ref(str));
+    std::thread thread_2(thread_function, str); 
+    thread_1.join();
+    thread_2.join();
 
-    std::thread thread_1(thread_function, number);   
-    for(int i=0; i<number; i++)
-    {
-        std::cout<<"main i="<<i<<"\n";
-        busy_work();
-    }
-    thread_1.detach();
-    if(thread_1.joinable())
-        thread_1.join();
 
     return 0;
 }
