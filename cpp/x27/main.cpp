@@ -1,31 +1,54 @@
 #include <iostream>
 #include <thread>
+#include <mutex>
 #include <string>
 #include <cstdlib>
 
-void fill_string(int limit, std::string& str)
+struct GuardString
+{
+    std::mutex mtx;
+    std::string str;
+};
+
+void fill_string(int limit, GuardString& str)
 {
     if (limit <= 0)
         return;
+
+    std::lock_guard<std::mutex> lg(str.mtx);
+    int acc = 0;
     for(int i=0; i<limit; ++i)
     {
-        str.push_back(static_cast<char>((std::rand() % 25) + 87));
+        str.str.push_back(static_cast<char>((std::rand() % 25) + 97));
+        for(int i=0; i<100; ++i)
+        {
+            if (i % 2 == 0)
+            {
+                acc += i;
+            }
+        }
+        acc = 0;
     }
+    std::cout<<"END OF FILL STRING FUNCTION\n";
 }
 
-void thread_function(std::string& str)
+void thread_function(GuardString& str)
 {
-    std::cout<<"thread recieved str:\n"<<str<<"\n";
+    std::lock_guard<std::mutex> lg(str.mtx);
+    std::cout<<"thread recieved str:\n"<<str.str<<"\n";
+    std::cout<<"END OF THREAD FUNCTION\n";
 }
 
 int main(int argc, char* argv[])
 {
 
-    int number = 50;
+    int number = 5000;
     std::string str;
+
+    GuardString gd_str;
        
-    std::thread thread_1(fill_string, number, std::ref(str));
-    std::thread thread_2(thread_function, str); 
+    std::thread thread_1(fill_string, number, std::ref(gd_str));
+    std::thread thread_2(thread_function, std::ref(gd_str)); 
     thread_1.join();
     thread_2.join();
 
