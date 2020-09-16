@@ -3,6 +3,7 @@
 #include <mutex>
 #include <string>
 #include <cstdlib>
+#include <unistd.h>
 
 struct GuardString
 {
@@ -46,12 +47,16 @@ int main(int argc, char* argv[])
     std::string str;
 
     GuardString gd_str;
-       
-    std::thread thread_1(fill_string, number, std::ref(gd_str));
-    std::thread thread_2(thread_function, std::ref(gd_str)); 
-    thread_1.join();
-    thread_2.join();
-
+    
+    for (int i=0; i<5; i++)
+    {
+        std::cout<<"\n\n\n\nITERATION NUMBER "<<i<<"\n\n\n\n";
+        sleep(1);
+        std::thread thread_1(fill_string, number, std::ref(gd_str));
+        std::thread thread_2(thread_function, std::ref(gd_str)); 
+        thread_1.join();
+        thread_2.join();
+    }
 
     return 0;
 }
