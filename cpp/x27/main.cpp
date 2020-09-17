@@ -42,7 +42,6 @@ void thread_function(GuardString& str)
 
 int main(int argc, char* argv[])
 {
-
     int number = 5000;
     std::string str;
 
