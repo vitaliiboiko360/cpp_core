@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 
-#define size 256;
+#define size 256
 struct string
 {
     char buffer[size];
