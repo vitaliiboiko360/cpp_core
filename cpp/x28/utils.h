@@ -10,7 +10,7 @@ struct cmd_arg_parser
     int argc;
     char** argv;
     std::string file_name;
-    int file_size{ 0 };
+    int file_size;
 
     cmd_arg_parser(int argc, char* argv[])
     : argc(argc)
@@ -39,8 +39,8 @@ struct cmd_arg_parser
         
         if (argc > 2)
             file_size = std::atoi(argv[2]);
-        
-        if (file_size == 0);
+
+        if (file_size == 0)
             file_size = DEFAULT_FILE_SIZE;
 
     }

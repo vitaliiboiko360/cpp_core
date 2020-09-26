@@ -1,4 +1,6 @@
 #include <string>
+#include <fstream>
+#include <cstdlib>
 
 #include "utils.h"
 
@@ -10,6 +12,11 @@ int main(int argc, char* argv[])
     std::string file_name{options.file_name};
     int file_size = options.file_size;
 
-    std::cout<<"file_name= "<<file_name<<"\n";
-    std::cout<<"file_size= "<<file_size<<"\n";
+    std::ofstream file{options.file_name};
+
+    int i{0};
+    do
+    {
+        file<<std::rand();
+    } while (i++ < options.file_size/4);
 }
