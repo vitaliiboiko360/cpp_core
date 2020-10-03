@@ -4,41 +4,38 @@
 
 const int ID_SIZE = 3;
 
-
-
 class A 
 {
 public:
     A()
-    : id()
     {
-        std::cout<<std::hex<<this<<" A()\n";
+        std::cout<<std::hex<<(reinterpret_cast<intptr_t >(this) & 0xffff)<<" A()\n";
     }
 
     ~A()
     {
-        std::cout<<std::hex<<this<<" ~A()\n";
+        std::cout<<std::hex<<(reinterpret_cast<intptr_t >(this) & 0xffff)<<" ~A()\n";
     }
 
     A(const A& a)
     {
-        std::cout<<std::hex<<this<<" A(const A& a)\n";
+        std::cout<<std::hex<<(reinterpret_cast<intptr_t >(this) & 0xffff)<<" A(const A& a)\n";
     }
 
     A& operator=(const A& a)
     {
-        std::cout<<std::hex<<this<<" A operator=(const A& a)\n";
+        std::cout<<std::hex<<(reinterpret_cast<intptr_t >(this) & 0xffff)<<" A operator=(const A& a)\n";
         return *this;
     }
 
     A(A&& a)
     {
-        std::cout<<std::hex<<this<<" A(A&& a)\n";
+        std::cout<<std::hex<<(reinterpret_cast<intptr_t >(this) & 0xffff)<<" A(A&& a)\n";
     }
 
     A& operator=(A&& a)
     {
-        std::cout<<std::hex<<this<<" A& operator=(A&& a)\n";
+        std::cout<<std::hex<<(reinterpret_cast<intptr_t >(this) & 0xffff)<<" A& operator=(A&& a)\n";
         return *this;
     }
 
@@ -57,19 +54,38 @@ A func_2(A a)
     return a;
 }
 
+class B
+{
+public:
+    B(const A& a)
+    : a(std::move(a))
+    {
+        std::cout<<std::hex<<(reinterpret_cast<intptr_t >(this) & 0xffff)<<" B(const A& a)\n";
+    }
 
+    B(A&& aa)
+    : a(aa)
+    {
+        std::cout<<std::hex<<(reinterpret_cast<intptr_t >(this) & 0xffff)<<" B(A&& a)\n";
+    }
+
+    ~B()
+    {
+        std::cout<<std::hex<<(reinterpret_cast<intptr_t >(this) & 0xffff)<<" ~B()\n";
+    }
+
+private:
+    A a;
+};
 
 int main(int argc, char* argv[])
 {
 
     A a;
-    A a1;
+    A& ref_a = a;
+    B b(ref_a);
 
-    func(a);
-    func_2(a1);
-
-    a = a1;
-    A a2 = a;
+    //A a2 = std::move(a);
 
     return 0;
 }
