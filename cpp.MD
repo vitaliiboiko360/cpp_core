@@ -1,3 +1,10 @@
+#### unique_ptr
+```void reset()```
+replaces managed object
+```pointer release() noexecpt;```
+releases the ownership of the managed object
+any get() returns nullptr after the call
+
 #### scoped enum
 ```
 enum class Note : char { C, D, E, F, G, A, B };
