@@ -27,6 +27,16 @@ public:
         print_id("A(A&& a)", a.myid);
     }
 
+    A& operator= (const A& other)
+    {
+        print_id("A& oeprator= (const A& other)", other.myid);
+        if (this == &other)
+            return *this;
+        
+        std::cout<<"this.myid= "<<myid<<" other.myid= "<<other.myid<<"\n";
+        return *this;
+    }
+
     A& operator= (A&& rref)
     {
         print_id("A& operator= (A&& rref)", rref.myid);
@@ -49,11 +59,17 @@ private:
 
 int A::id = 0;
 
+bool operator<(const A& lhs, const A& rhs)
+{
+    return reinterpret_cast<intptr_t>(&lhs) < reinterpret_cast<intptr_t>(&rhs);
+}
+
+
 int main()
 {
 
-    std::vector<A> s;
+    std::set<A> s;
     for(int i=0; i<5; ++i)
-        s.push_back(A());
+        s.insert(A());
 
 }
