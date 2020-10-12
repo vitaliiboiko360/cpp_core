@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <netdb.h>
 
 #include <iostream>
 
@@ -22,7 +23,7 @@ void chck_error_code(int ec, const char* msg)
 int main()
 {
     const int max_conns_num = 10;
-    const int server_port = 19000;
+    const char* server_port = "19000";
     const int settings_number = 10;
     int settings[settings_number];
 
@@ -31,17 +32,27 @@ int main()
         sfd = socket(AF_INET, SOCK_STREAM, 0),
         "socket");
 
-    struct sockaddr_in srv_addr;
-    srv_addr.sin_family = AF_INET;
-    srv_addr.sin_port = htons(server_port);
-
-    inet_pton(AF_INET, "0.0.0.0", &srv_addr.sin_addr.s_addr);
-
-    chck_error_code(
-        bind(sfd, (struct sockaddr*)&srv_addr, sizeof(srv_addr)),
-        "bind");
-
     chck_error_code(listen(sfd, max_conns_num), "listen");
 
-    close(sfd);
+    struct addrinfo hints;
+    struct addrinfo* result, *rp;
+
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_addr = NULL;
+    hints.ai_canonname = NULL;
+    hints.ai_next = NULL;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_flags = AI_PASSIVE | AI_NUMERICSERV;
+    chck_error_code(getaddrinfo(NULL, server_port, &hints, &result), "getaddrinfo");
+
+    for(rp = result; rp != NULL; rp = rp->ai_next)
+    {
+        std::cout<<"ai_family"<<rp->ai_family<<" ";
+        std::cout<<"ai_socktype"<<rp->ai_socktype<<" ";
+        std::cout<<"ai_protocol"<<rp->ai_protocol<<" ";
+        std::cout<<"ai_addr"<<rp->ai_addr<<"\n";
+    }
+
+    freeaddrinfo(result);
 }
