@@ -48,10 +48,17 @@ int main()
 
     for(rp = result; rp != NULL; rp = rp->ai_next)
     {
-        std::cout<<"ai_family"<<rp->ai_family<<" ";
-        std::cout<<"ai_socktype"<<rp->ai_socktype<<" ";
-        std::cout<<"ai_protocol"<<rp->ai_protocol<<" ";
-        std::cout<<"ai_addr"<<rp->ai_addr<<"\n";
+        std::cout<<"ai_family "<<rp->ai_family<<" ";
+        std::cout<<"ai_socktype "<<rp->ai_socktype<<" ";
+        std::cout<<"ai_protocol "<<rp->ai_protocol<<" ";
+        std::cout<<"ai_addr "<<rp->ai_addr<<"\n";
+        std::cout<<"sizeof(*rp->ai_addr) "<<sizeof(*rp->ai_addr)<<"\n";
+        if (rp->ai_protocol == 6)
+        {
+            char str[_SC_CHAR_MAX];
+            inet_ntop(AF_INET6, rp->ai_addr, str, _SC_CHAR_MAX);
+            std::cout<<"inet_ntop "<<str<<"\n";
+        }
     }
 
     freeaddrinfo(result);
