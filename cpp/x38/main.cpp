@@ -1,14 +1,10 @@
-#include "server_certificate.hpp"
-
 #include <boost/beast/core.hpp>
-#include <boost/beast/ssl.hpp>
 #include <boost/beast/websocket.hpp>
-#include <boost/beast/websocket/ssl.hpp>
 #include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/ssl/stream.hpp>
 #include <cstdlib>
 #include <functional>
 #include <iostream>
+#include <locale>
 #include <string>
 #include <thread>
 
@@ -16,22 +12,18 @@ namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
-namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 //------------------------------------------------------------------------------
 
 // Echoes back all received WebSocket messages
 void
-do_session(tcp::socket& socket, ssl::context& ctx)
+do_session(tcp::socket socket)
 {
     try
     {
-        // Construct the websocket stream around the socket
-        websocket::stream<beast::ssl_stream<tcp::socket&>> ws{socket, ctx};
-
-        // Perform the SSL handshake
-        ws.next_layer().handshake(ssl::stream_base::server);
+        // Construct the stream by moving in the socket
+        websocket::stream<tcp::socket> ws{std::move(socket)};
 
         // Set a decorator to change the Server of the handshake
         ws.set_option(websocket::stream_base::decorator(
@@ -39,12 +31,13 @@ do_session(tcp::socket& socket, ssl::context& ctx)
             {
                 res.set(http::field::server,
                     std::string(BOOST_BEAST_VERSION_STRING) +
-                        " websocket-server-sync-ssl");
+                        " websocket-server-sync");
             }));
 
         // Accept the websocket handshake
         ws.accept();
-
+        auto& f = std::use_facet<std::ctype<char>>(std::locale());
+        int iteration_count{ 0 };
         for(;;)
         {
             // This buffer will hold the incoming message
@@ -52,10 +45,17 @@ do_session(tcp::socket& socket, ssl::context& ctx)
 
             // Read a message
             ws.read(buffer);
+            char* p = static_cast<char*>(buffer.data().data());
 
+            for(int i=0; i<buffer.size(); i++)
+            {   
+                p[i] = f.toupper(p[i]);
+            }
             // Echo the message back
             ws.text(ws.got_text());
             ws.write(buffer.data());
+
+            std::cout<<"#"<<iteration_count++<<"iter ended\n";
         }
     }
     catch(beast::system_error const& se)
@@ -80,42 +80,31 @@ int main(int argc, char* argv[])
         // if (argc != 3)
         // {
         //     std::cerr <<
-        //         "Usage: websocket-server-sync-ssl <address> <port>\n" <<
+        //         "Usage: websocket-server-sync <address> <port>\n" <<
         //         "Example:\n" <<
-        //         "    websocket-server-sync-ssl 0.0.0.0 8080\n";
+        //         "    websocket-server-sync 0.0.0.0 8080\n";
         //     return EXIT_FAILURE;
         // }
-
-        const char* addr = "0.0.0.0";
-        auto const address = net::ip::make_address(addr);
+        auto const address = net::ip::make_address("0.0.0.0");
         const uint16_t port = 15000;
-     
+
         // The io_context is required for all I/O
         net::io_context ioc{1};
 
-        // The SSL context is required, and holds certificates
-        ssl::context ctx{ssl::context::tlsv12};
-
-        // This holds the self-signed certificate used by the server
-        load_server_certificate(ctx);
-
         // The acceptor receives incoming connections
         tcp::acceptor acceptor{ioc, {address, port}};
-        std::cout<<"acceptor created with address "<<address<<"\nand\nport "<<port<<"\n";
         for(;;)
         {
             // This will receive the new connection
             tcp::socket socket{ioc};
 
             // Block until we get a connection
-            std::cout<<"before accept\n";
             acceptor.accept(socket);
-            std::cout<<"after accept\n";
+
             // Launch the session, transferring ownership of the socket
-            std::thread{std::bind(
+            std::thread(
                 &do_session,
-                std::move(socket),
-                std::ref(ctx))}.detach();
+                std::move(socket)).detach();
         }
     }
     catch (const std::exception& e)
