@@ -1,6 +1,9 @@
+
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/asio/ip/tcp.hpp>
+
 #include <cstdlib>
 #include <functional>
 #include <iostream>
@@ -14,9 +17,11 @@ namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
-//------------------------------------------------------------------------------
+uint8_t get_rand_color_value()
+{
+    return std::rand() % 256;
+}
 
-// Echoes back all received WebSocket messages
 void
 do_session(tcp::socket socket)
 {
@@ -36,25 +41,21 @@ do_session(tcp::socket socket)
 
         // Accept the websocket handshake
         ws.accept();
-        auto& f = std::use_facet<std::ctype<char>>(std::locale());
+        
+        const std::string svg = R"_(<svg width="100" height="100"><circle cx="50" cy="50" r="40" style="fill:rgb(0,0,{fill_blue});stroke-width:3;stroke:rgb(0,0,0)"/></svg>)_";
+        const std::string rplcmnt = "{fill_blue}";
+
         int iteration_count{ 0 };
         for(;;)
-        {
-            // This buffer will hold the incoming message
+        {   
             beast::flat_buffer buffer;
-
-            // Read a message
-            ws.read(buffer);
-            char* p = static_cast<char*>(buffer.data().data());
-
-            for(int i=0; i<buffer.size(); i++)
-            {   
-                p[i] = f.toupper(p[i]);
-            }
-            // Echo the message back
+            // blocks
+            //ws.read(buffer);
             ws.text(ws.got_text());
-            ws.write(buffer.data());
-
+            // blocks 
+            auto msg = boost::algorithm::replace_first_copy(svg, rplcmnt, std::to_string(get_rand_color_value()));
+            ws.write(boost::asio::buffer(msg));
+            sleep(1);
             std::cout<<"#"<<iteration_count++<<"iter ended\n";
         }
     }
@@ -76,32 +77,20 @@ int main(int argc, char* argv[])
 {
     try
     {
-        // Check command line arguments.
-        // if (argc != 3)
-        // {
-        //     std::cerr <<
-        //         "Usage: websocket-server-sync <address> <port>\n" <<
-        //         "Example:\n" <<
-        //         "    websocket-server-sync 0.0.0.0 8080\n";
-        //     return EXIT_FAILURE;
-        // }
         auto const address = net::ip::make_address("0.0.0.0");
         const uint16_t port = 15000;
 
-        // The io_context is required for all I/O
         net::io_context ioc{1};
 
-        // The acceptor receives incoming connections
         tcp::acceptor acceptor{ioc, {address, port}};
         for(;;)
         {
-            // This will receive the new connection
             tcp::socket socket{ioc};
 
-            // Block until we get a connection
+            // block
             acceptor.accept(socket);
 
-            // Launch the session, transferring ownership of the socket
+            // move socket to session
             std::thread(
                 &do_session,
                 std::move(socket)).detach();
