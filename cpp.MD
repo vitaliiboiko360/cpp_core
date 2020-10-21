@@ -41,7 +41,7 @@ auto d = f(); // d has type double
 ```
 
 #### nullptr_t  
-helps to avoid mistages when a null pointer was interpreted as integral value  
+helps to avoid mistakes when a null pointer was interpreted as integral value  
 
 ```
 void f(int);
