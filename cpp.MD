@@ -1,6 +1,7 @@
 #### variadic templates
 template that accept a variable number of template arguments
-```void print()
+```
+void print()
 {
 }
 
@@ -9,17 +10,18 @@ void print (const T& firstArg, const Types&... args)
 {
     std::cout<<firstArg << std::endl;
     print(args...);
-}```
+}
+```  
 
-
-
-#### constexpr
+#### constexpr  
 enable expression evaluated at compile time
-```constexpr int square(int x)
+```
+constexpr int square(int x)
 {
     return x * x;
 }
-float a[square(9)]; // OK since c++11: a has 81 elements````
+float a[square(9)]; // OK since c++11: a has 81 elements
+```
 
 #### unique_ptr
 ```void reset()```
