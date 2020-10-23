@@ -17,9 +17,47 @@ namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
-uint8_t get_rand_color_value()
+const int Y_MAX = 600;
+const int X_MAX = 800;
+const std::string svg = {R"_(<svg height="600" width="800">
+                <g>
+                    <defs>
+                        <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style="stop-color:rgb(255,255,255);
+                        stop-opacity:0" />
+                        <stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
+                        </radialGradient>
+                    </defs>
+                    <ellipse cx="{CX}" cy="{CY}" rx="85" ry="55" fill="url(#grad1)" />
+                    <text x="{CX}" y="{CY}" fill="black">{TEXT}</text>
+                </g>
+                </svg>)_"};
+
+int get_rand_value(int upper_limit)
 {
-    return std::rand() % 256;
+    return std::rand() % upper_limit;
+}
+
+std::vector<std::pair<int, int>> xy = {{400, 200}, {600, 400}, {400, 600}, {200, 400}};
+
+bool replace(std::string& str, const std::string& from, const std::string& to) 
+{
+    size_t start_pos = str.find(from);
+    if(start_pos == std::string::npos)
+        return false;
+    str.replace(start_pos, from.length(), to);
+    return true;
+}
+
+void replace_all(std::string& str, const std::string& from, const std::string& to) 
+{
+    if(from.empty())
+        return;
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
 }
 
 void
@@ -41,22 +79,28 @@ do_session(tcp::socket socket)
 
         // Accept the websocket handshake
         ws.accept();
-        
-        const std::string svg = R"_(<svg width="100" height="100"><circle cx="50" cy="50" r="40" style="fill:rgb(0,0,{fill_blue});stroke-width:3;stroke:rgb(0,0,0)"/></svg>)_";
-        const std::string rplcmnt = "{fill_blue}";
 
-        int iteration_count{ 0 };
+        char i{ 0 };
+        uint64_t count{ 0 };
         for(;;)
         {   
             beast::flat_buffer buffer;
             // blocks
             //ws.read(buffer);
             ws.text(ws.got_text());
+
+            i >= 4 ? i=0 : i=i;
+
+            auto msg{ svg };
+            replace_all(msg, "{CY}", std::to_string(xy[i].first));
+            replace_all(msg, "{CX}", std::to_string(xy[i].second));
+            replace(msg, "{TEXT}", std::to_string(count++));
+
             // blocks 
-            auto msg = boost::algorithm::replace_first_copy(svg, rplcmnt, std::to_string(get_rand_color_value()));
             ws.write(boost::asio::buffer(msg));
+
+            i += 1;
             sleep(1);
-            std::cout<<"#"<<iteration_count++<<"iter ended\n";
         }
     }
     catch(beast::system_error const& se)
