@@ -1,3 +1,9 @@
+#### allocators \<memory\>
+
+
+#### remove_if
+
+
 #### variadic templates
 template that accept a variable number of template arguments
 ```
