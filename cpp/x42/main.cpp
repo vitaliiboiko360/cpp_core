@@ -33,33 +33,6 @@ const std::string svg = {R"_(<svg height="600" width="800">
                 </g>
                 </svg>)_"};
 
-int get_rand_value(int upper_limit)
-{
-    return std::rand() % upper_limit;
-}
-
-std::vector<std::pair<int, int>> xy = {{400, 200}, {600, 400}, {400, 600}, {200, 400}};
-
-bool replace(std::string& str, const std::string& from, const std::string& to) 
-{
-    size_t start_pos = str.find(from);
-    if(start_pos == std::string::npos)
-        return false;
-    str.replace(start_pos, from.length(), to);
-    return true;
-}
-
-void replace_all(std::string& str, const std::string& from, const std::string& to) 
-{
-    if(from.empty())
-        return;
-    size_t start_pos = 0;
-    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
-        str.replace(start_pos, from.length(), to);
-        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
-    }
-}
-
 void
 do_session(tcp::socket socket)
 {
@@ -86,21 +59,11 @@ do_session(tcp::socket socket)
         {   
             beast::flat_buffer buffer;
             // blocks
-            //ws.read(buffer);
+            ws.read(buffer);
             ws.text(ws.got_text());
 
-            i >= 4 ? i=0 : i=i;
-
-            auto msg{ svg };
-            replace_all(msg, "{CY}", std::to_string(xy[i].first));
-            replace_all(msg, "{CX}", std::to_string(xy[i].second));
-            replace(msg, "{TEXT}", std::to_string(count++));
-
             // blocks 
-            ws.write(boost::asio::buffer(msg));
-
-            i += 1;
-            sleep(1);
+            ws.write(buffer);
         }
     }
     catch(beast::system_error const& se)
