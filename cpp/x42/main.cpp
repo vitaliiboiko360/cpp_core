@@ -11,27 +11,13 @@
 #include <string>
 #include <thread>
 
+#include "svg_model.h"
+
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
-
-const int Y_MAX = 600;
-const int X_MAX = 800;
-const std::string svg = {R"_(<svg height="600" width="800">
-                <g>
-                    <defs>
-                        <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style="stop-color:rgb(255,255,255);
-                        stop-opacity:0" />
-                        <stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
-                        </radialGradient>
-                    </defs>
-                    <ellipse cx="{CX}" cy="{CY}" rx="85" ry="55" fill="url(#grad1)" />
-                    <text x="{CX}" y="{CY}" fill="black">{TEXT}</text>
-                </g>
-                </svg>)_"};
 
 void
 do_session(tcp::socket socket)
@@ -53,8 +39,8 @@ do_session(tcp::socket socket)
         // Accept the websocket handshake
         ws.accept();
 
-        char i{ 0 };
-        uint64_t count{ 0 };
+        svg_model svg_doc;
+
         for(;;)
         {   
             beast::flat_buffer buffer;
@@ -63,7 +49,8 @@ do_session(tcp::socket socket)
             ws.text(ws.got_text());
 
             // blocks 
-            ws.write(buffer);
+            ws.write(boost::asio::buffer(svg_doc.get_svg()));
+            svg_doc.next_tick();
         }
     }
     catch(beast::system_error const& se)
