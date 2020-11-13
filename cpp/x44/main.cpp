@@ -17,7 +17,7 @@ void ec /* error check */ (int status, const char* msg)
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     struct sockaddr_storage cli_addr;
     struct addrinfo hints;
@@ -28,7 +28,12 @@ int main()
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
 
-    ec(getaddrinfo(NULL, "15000", &hints, &p_serv_info), "getaddrinfo");
+    char* host = NULL;
+    if(argc > 1)
+    {
+        host = argv[1];
+    }
+    ec(getaddrinfo(host, "15000", &hints, &p_serv_info), "getaddrinfo");
 
     char ip_addres[INET6_ADDRSTRLEN];
     void* addr;
@@ -46,5 +51,5 @@ int main()
         inet_ntop(p->ai_family, &addr, ip_addres, sizeof(ip_addres));
         printf("%s %s\n", ip_version, ip_addres);
     }
-
+    freeaddrinfo(&hints);
 }
