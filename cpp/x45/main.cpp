@@ -1,8 +1,8 @@
-
+#include <stdlib.h>
 #include <sys/socket.h>
-#include <linux/in.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <unistd.h>
 
 int
 main(
@@ -68,7 +68,7 @@ char **argv
      * Accept a connection.
      */
     namelen = sizeof(client);
-    if ((ns = accept(s, (struct sockaddr *)&client, &namelen)) == -1)
+    if ((ns = accept(s, (struct sockaddr *)&client, (socklen_t *)&namelen)) == -1)
     {
         perror("Accept()");
         exit(5);
