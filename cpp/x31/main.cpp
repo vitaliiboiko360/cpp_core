@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
     A& ref_a = a;
     B b(ref_a);
 
-    //A a2 = std::move(a);
+    A a2 = std::move(a);
 
     return 0;
 }

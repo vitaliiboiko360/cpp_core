@@ -12,15 +12,23 @@ const int MaxConnects = 5;
 const int ConversationLen = 16;
 const int BuffSize = 32;
 
-void ec/* error check */(int return_value, const char* msg) {
-  perror(msg);
+void ec/* error check */(int return_value, const char* msg) 
+{
   if (return_value < 0)
   {
+    perror(msg);
     exit(-1);
   }
 }
 
-int main() {
+struct buffer
+{
+  char data[256];
+  const unsigned int size = 256;
+};
+
+int main() 
+{
   int fd;
   ec(fd = socket(AF_INET, SOCK_STREAM, 0), "socket");          
  
@@ -30,4 +38,19 @@ int main() {
   server.sin_port = htons(PortNumber);
 
   ec(connect(fd, (struct sockaddr*)&server, sizeof(server)), "connect");
+
+  struct buffer buf;
+  while(1)
+  {
+    int bytes_read;
+    printf("enter message:\n");
+    ec(bytes_read = read(STDIN_FILENO, buf.data, buf.size-1), "read");
+
+    write(fd, buf.data, bytes_read);
+
+    memset(buf.data, '\0', buf.size);
+    read(fd, buf.data, buf.size-1);
+    printf("server replied %s\n", buf.data);
+  }
+  close(fd);
 }
