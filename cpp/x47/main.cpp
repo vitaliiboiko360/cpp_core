@@ -50,7 +50,7 @@ int main()
 
     memset(buf.data, '\0', buf.size);
     read(fd, buf.data, buf.size-1);
-    printf("server replied %s\n", buf.data);
+    printf("server replied: %s\n", buf.data);
   }
   close(fd);
 }

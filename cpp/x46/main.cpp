@@ -9,7 +9,6 @@
 
 const int PortNumber = 15000;
 const int MaxConnects = 5;
-const int ConversationLen = 16;
 const int BuffSize = 32;
 
 void report(const char* msg, int terminate) 
@@ -49,9 +48,9 @@ int main()
       continue;
     }
 
-    for (int i = 0; i < ConversationLen; i++) 
+    int iter_count = 0;
+    while (1) 
     {
-      printf("#%d:\n", i);
       char buffer[BuffSize + 1];
       memset(buffer, '\0', sizeof(buffer));
       int count = read(client_fd, buffer, sizeof(buffer));
@@ -60,6 +59,11 @@ int main()
         puts(buffer);
         write(client_fd, buffer, sizeof(buffer)); 
       }
+      else
+      {
+        break;
+      }
+      printf("#%d\n", iter_count++);
     }
     printf("closing socket\n");
     close(client_fd); 
