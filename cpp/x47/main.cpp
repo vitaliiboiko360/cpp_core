@@ -45,7 +45,7 @@ int main()
     int bytes_read;
     printf("enter message:\n");
     ec(bytes_read = read(STDIN_FILENO, buf.data, buf.size-1), "read");
-
+    printf("end of input\n");
     write(fd, buf.data, bytes_read);
 
     memset(buf.data, '\0', buf.size);
