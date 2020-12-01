@@ -41,7 +41,7 @@ int main()
 
   struct buffer buf;
   int msg_buffer_size = 1;
-  void* p_msg_buffer = malloc(msg_buffer_size);
+  char* p_msg_buffer = (char*)malloc(msg_buffer_size);
   while(1)
   {
     int bytes_read;
@@ -60,12 +60,13 @@ int main()
       total_bytes_read += bytes_read;
       if(total_bytes_read >= msg_buffer_size-1)
       {
-        p_msg_buffer = realloc(p_msg_buffer, msg_buffer_size *= 2);
+        p_msg_buffer = (char*)realloc((void*)p_msg_buffer, msg_buffer_size *= 2);
       }
     } while(bytes_read > 0);
-    *p_msg_buffer = 0;
+    *(p_msg_buffer + msg_buffer_size-1) = 0;
+    printf("%s\n", p_msg_buffer);
 
-    printf("server replied: %s\n", buf.data);
+    //printf("server replied: %s\n", buf.data);
   }
   close(fd);
 }
