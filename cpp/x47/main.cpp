@@ -44,7 +44,7 @@ int main()
   char* p_msg_buffer = (char*)malloc(msg_buffer_size);
   while(1)
   {
-    int bytes_read;
+    int bytes_read = 0;
     printf("enter message:\n");
     ec(bytes_read = read(STDIN_FILENO, buf.data, buf.size-1), "read");
     printf("end of input\n");
@@ -58,15 +58,10 @@ int main()
     {
       bytes_read =+ read(fd, p_msg_buffer + total_bytes_read, msg_buffer_size-1);
       total_bytes_read += bytes_read;
-      if(total_bytes_read >= msg_buffer_size-1)
-      {
-        p_msg_buffer = (char*)realloc((void*)p_msg_buffer, msg_buffer_size *= 2);
-      }
+
     } while(bytes_read > 0);
     *(p_msg_buffer + msg_buffer_size-1) = 0;
-    printf("%s\n", p_msg_buffer);
-
-    //printf("server replied: %s\n", buf.data);
+    printf("server replied: %.*s\n", total_bytes_read, p_msg_buffer);
   }
   close(fd);
 }
