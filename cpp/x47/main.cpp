@@ -76,10 +76,10 @@ int main()
     } while(bytes_read > 0 || was_realloc);
     *(dbuf.data + total_bytes_read+1) = 0;
     printf("\n\nyou entered %d characters long message\n\n", total_bytes_read);
-    write(fd, dbuf.data, total_bytes_read);
+    send(fd, dbuf.data, total_bytes_read, NULL);
 
 
-    ec(read(fd, buf.data, buf.size), "read");
+    ec(recv(fd, buf.data, buf.size, NULL), "read");
     printf("server replied: %.*s\n", buf.size, buf.data);
   }
   close(fd);
