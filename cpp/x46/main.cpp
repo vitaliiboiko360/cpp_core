@@ -35,6 +35,8 @@ int main()
     report("listen", 1); 
 
   fprintf(stderr, "Listening on port %i for clients...\n", PortNumber);
+  char* str_addr = inet_ntoa(saddr.sin_addr);
+  fprintf(stdout, "addr %s\n", str_addr);
   
   while (1) 
   {

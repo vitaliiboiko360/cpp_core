@@ -31,6 +31,7 @@ struct dyn_buffer
 {
   char* data;
   unsigned int size;
+  unsigned int memory_size;
 };
 
 int main() 
@@ -45,12 +46,10 @@ int main()
 
   ec(connect(fd, (struct sockaddr*)&server, sizeof(server)), "connect");
 
-  struct buffer buf;
   struct dyn_buffer dbuf;
-  int msg_buffer_size = 1;
-  char* p_msg_buffer = (char*)malloc(msg_buffer_size);
   dbuf.data = (char*)malloc(256);
-  dbuf.size = 256;
+  dbuf.memory_size = 256;
+  dbuf.size = 0;
   bool was_realloc = false;
   while(1)
   {
@@ -61,26 +60,26 @@ int main()
     do
     {
       was_realloc = false;
-      /* dbuf.size should not be 0 or read fails */
-      ec(bytes_read = read(STDIN_FILENO, buf.data+total_bytes_read, dbuf.size-1-total_bytes_read), "read");
-      total_bytes_read += bytes_read;
+      ec(bytes_read = read(STDIN_FILENO, dbuf.data+dbuf.size, dbuf.memory_size-dbuf.size), "read");
+      dbuf.size += bytes_read;
 
-      if(total_bytes_read == dbuf.size-1)
+      if(dbuf.size == dbuf.memory_size)
       {
         was_realloc = true;
-        int new_size = dbuf.size * 2;
+        int new_size = dbuf.memory_size * 2;
         dbuf.data = (char*)realloc((void*)dbuf.data, new_size);
-        dbuf.size = new_size;
+        dbuf.memory_size = new_size;
       }
       
     } while(bytes_read > 0 || was_realloc);
-    *(dbuf.data + total_bytes_read+1) = 0;
-    printf("\n\nyou entered %d characters long message\n\n", total_bytes_read);
-    send(fd, dbuf.data, total_bytes_read, NULL);
+    printf("\n\nyou entered %d characters long message\n\n", dbuf.size);
+    send(fd, dbuf.data, dbuf.size, 0);
 
 
-    ec(recv(fd, buf.data, buf.size, NULL), "read");
-    printf("server replied: %.*s\n", buf.size, buf.data);
+    bytes_read = 0;
+    ec(bytes_read = recv(fd, dbuf.data, dbuf.memory_size, 0), "read");
+    dbuf.size = bytes_read;
+    printf("server replied: %.*s\n", dbuf.size, dbuf.data);
   }
   close(fd);
 }
