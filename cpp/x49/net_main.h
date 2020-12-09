@@ -18,6 +18,7 @@ class client
 public:
     int run() 
     {
+        int cli_fd = ec(socket(AF_INET, SOCK_STREAM, 0), "socket");
         return 0;
     }
 };
@@ -35,8 +36,6 @@ public:
         srv_addr.sin_port = htons(1122);
 
         ec(bind(srv_fd, (struct sockaddr*)&srv_addr, sizeof(srv_addr)), "bind");
-
-
 
         return 0;
     }
