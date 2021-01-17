@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
 
 #include "http_srv.h"
 #include "../../../uSockets/src/libusockets.h"
@@ -39,7 +39,7 @@ struct us_socket_t *on_http_socket_writable(struct us_socket_t *s) {
 }
 
 struct us_socket_t *on_http_socket_close(struct us_socket_t *s, int code, void *reason) {
-	printf("Client disconnected\n");
+	std::cout<<"Client disconnected\n";
 
 	return s;
 }
@@ -73,7 +73,7 @@ struct us_socket_t *on_http_socket_open(struct us_socket_t *s, int is_client, ch
 	/* Timeout idle HTTP connections */
 	us_socket_timeout(SSL, s, 30);
 
-	printf("Client connected\n");
+	std::cout<<"Client connected\n";
 
 	return s;
 }
@@ -107,9 +107,9 @@ void http_server::serve()
     struct us_listen_socket_t *listen_socket = us_socket_context_listen(SSL, http_context, 0, 3000, 0, sizeof(struct http_socket));
 
 	if (listen_socket) {
-		printf("Listening on port 3000...\n");
+		std::cout<<"Listening on port 3000...\n";
 		us_loop_run(loop);
 	} else {
-		printf("Failed to listen!\n");
+		std::cout<<"Failed to listen!\n";
 	}
 }
