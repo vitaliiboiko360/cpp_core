@@ -1,6 +1,7 @@
 #include "../../../uWebSockets/src/App.h"
 #include "../../../uWebSockets/examples/helpers/Middleware.h"
 #include "../../../uWebSockets/examples/helpers/AsyncFileStreamer.h"
+#include "/home/user1/uWebSockets/src/HttpParser.h"
 
 int main()
 {
@@ -10,6 +11,7 @@ int main()
 
     auto app = uWS::App().get("/*", [&asyncFileStreamer](auto *res, auto *req) {
             serveFile(res, req);
+            //auto url = req->getUrl();
             asyncFileStreamer.streamFile(res, req->getUrl());
         });
 
