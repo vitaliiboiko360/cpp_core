@@ -10,6 +10,8 @@
 !*.js
 !*/Makefile
 !Makefile
+!CMakeLists.txt
+!*.cmake
 
 # files in subdirectories
 !*/
