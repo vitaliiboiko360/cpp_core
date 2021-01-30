@@ -1,3 +1,10 @@
+#### std::variant<>
+```cpp
+std::variant<int, std::string> var{"hi"};
+std::cout << var.index() << '\n'; // prints 1
+var = 42;
+std::cout << var.index() << '\n'; // prints 0
+```
 #### allocators \<memory\>
 
 
