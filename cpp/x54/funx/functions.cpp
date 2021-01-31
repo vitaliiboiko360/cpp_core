@@ -16,13 +16,13 @@ void set_bit(struct bit_set_8* bits, uint8_t index)
     bits->bits = bits->bits | (1U << index);
 }
 
-bool get_bit(struct bit_set_8* bits, uint8_t index, uint8_t result)
+bool get_bit(struct bit_set_8* bits, uint8_t index, uint8_t* result)
 {
     if (index > 7)
     {
         return false;
     }
 
-    result = (bits->bits >> index) & 1U;
+    *result = (bits->bits >> index) & 1U;
     return true;
 }
