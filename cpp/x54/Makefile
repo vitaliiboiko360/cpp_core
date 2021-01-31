@@ -123,19 +123,6 @@ App/fast:
 	$(MAKE) -f CMakeFiles/App.dir/build.make CMakeFiles/App.dir/build
 .PHONY : App/fast
 
-#=============================================================================
-# Target rules for targets named Library
-
-# Build rule for target.
-Library: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Library
-.PHONY : Library
-
-# fast build rule for target.
-Library/fast:
-	$(MAKE) -f library/CMakeFiles/Library.dir/build.make library/CMakeFiles/Library.dir/build
-.PHONY : Library/fast
-
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -172,7 +159,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... App"
-	@echo "... Library"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
