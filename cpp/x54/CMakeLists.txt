@@ -1,9 +1,9 @@
 cmake_minimum_required (VERSION 3.16.3)
-project (App)
+project (app)
 
-set(CMAKE_PREFIX_PATH "./library/cmake")
+set(CMAKE_PREFIX_PATH "./funx/cmake")
 
-find_package(library)
-add_executable (App main.cpp)
+find_package(funx)
+add_executable(app main.cpp)
 
-target_link_libraries (App LINK_PUBLIC Library)
+target_link_libraries(app LINK_PUBLIC funx)
