@@ -9,7 +9,7 @@ set(CMAKE_PREFIX_PATH "./funx/cmake")
 find_package(funx)
 add_executable(app main.cpp)
 
-target_link_libraries(app LINK_PUBLIC funx)
+target_link_libraries(app PUBLIC funx)
 
 target_include_directories(app PUBLIC 
 "${PROJECT_BINARY_DIR}"

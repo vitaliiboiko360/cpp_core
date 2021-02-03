@@ -1,5 +1,5 @@
 #include <iostream>
-#include "funx/funx.h"
+#include "funx/functions.h"
 
 int main()
 {
