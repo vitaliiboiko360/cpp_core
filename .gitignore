@@ -8,8 +8,6 @@
 !*.c
 !*.cpp
 !*.js
-!*/Makefile
-!Makefile
 !CMakeLists.txt
 !*.cmake
 
