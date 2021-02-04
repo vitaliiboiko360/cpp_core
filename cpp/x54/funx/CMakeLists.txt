@@ -3,7 +3,7 @@ project (funx VERSION 1.0)
 
 add_library (funx SHARED functions.cpp)
 
-#configure_file(functions.h.in functions.h)
+configure_file(config.h.in config.h)
 
 install(TARGETS funx DESTINATION lib)
 install(FILES functions.h DESTINATION include)

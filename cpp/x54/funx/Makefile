@@ -48,13 +48,47 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/user1/cpp_core/cpp/x54/funx
+CMAKE_SOURCE_DIR = /home/user1/cpp_core/cpp/x54
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/user1/cpp_core/cpp/x54/funx
+CMAKE_BINARY_DIR = /home/user1/cpp_core/cpp/x54
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -78,16 +112,28 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/user1/cpp_core/cpp/x54/funx/CMakeFiles /home/user1/cpp_core/cpp/x54/funx/CMakeFiles/progress.marks
-	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/user1/cpp_core/cpp/x54/funx/CMakeFiles 0
+	cd /home/user1/cpp_core/cpp/x54 && $(CMAKE_COMMAND) -E cmake_progress_start /home/user1/cpp_core/cpp/x54/CMakeFiles /home/user1/cpp_core/cpp/x54/funx/CMakeFiles/progress.marks
+	cd /home/user1/cpp_core/cpp/x54 && $(MAKE) -f CMakeFiles/Makefile2 funx/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/user1/cpp_core/cpp/x54/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) -f CMakeFiles/Makefile2 clean
+	cd /home/user1/cpp_core/cpp/x54 && $(MAKE) -f CMakeFiles/Makefile2 funx/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,30 +143,32 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/user1/cpp_core/cpp/x54 && $(MAKE) -f CMakeFiles/Makefile2 funx/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/user1/cpp_core/cpp/x54 && $(MAKE) -f CMakeFiles/Makefile2 funx/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/user1/cpp_core/cpp/x54 && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named funx
+# Convenience name for target.
+funx/CMakeFiles/funx.dir/rule:
+	cd /home/user1/cpp_core/cpp/x54 && $(MAKE) -f CMakeFiles/Makefile2 funx/CMakeFiles/funx.dir/rule
+.PHONY : funx/CMakeFiles/funx.dir/rule
 
-# Build rule for target.
-funx: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 funx
+# Convenience name for target.
+funx: funx/CMakeFiles/funx.dir/rule
+
 .PHONY : funx
 
 # fast build rule for target.
 funx/fast:
-	$(MAKE) -f CMakeFiles/funx.dir/build.make CMakeFiles/funx.dir/build
+	cd /home/user1/cpp_core/cpp/x54 && $(MAKE) -f funx/CMakeFiles/funx.dir/build.make funx/CMakeFiles/funx.dir/build
 .PHONY : funx/fast
 
 functions.o: functions.cpp.o
@@ -129,7 +177,7 @@ functions.o: functions.cpp.o
 
 # target to build an object file
 functions.cpp.o:
-	$(MAKE) -f CMakeFiles/funx.dir/build.make CMakeFiles/funx.dir/functions.cpp.o
+	cd /home/user1/cpp_core/cpp/x54 && $(MAKE) -f funx/CMakeFiles/funx.dir/build.make funx/CMakeFiles/funx.dir/functions.cpp.o
 .PHONY : functions.cpp.o
 
 functions.i: functions.cpp.i
@@ -138,7 +186,7 @@ functions.i: functions.cpp.i
 
 # target to preprocess a source file
 functions.cpp.i:
-	$(MAKE) -f CMakeFiles/funx.dir/build.make CMakeFiles/funx.dir/functions.cpp.i
+	cd /home/user1/cpp_core/cpp/x54 && $(MAKE) -f funx/CMakeFiles/funx.dir/build.make funx/CMakeFiles/funx.dir/functions.cpp.i
 .PHONY : functions.cpp.i
 
 functions.s: functions.cpp.s
@@ -147,7 +195,7 @@ functions.s: functions.cpp.s
 
 # target to generate assembly for a file
 functions.cpp.s:
-	$(MAKE) -f CMakeFiles/funx.dir/build.make CMakeFiles/funx.dir/functions.cpp.s
+	cd /home/user1/cpp_core/cpp/x54 && $(MAKE) -f funx/CMakeFiles/funx.dir/build.make funx/CMakeFiles/funx.dir/functions.cpp.s
 .PHONY : functions.cpp.s
 
 # Help Target
@@ -156,8 +204,12 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... install/local"
+	@echo "... install"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... install/strip"
 	@echo "... funx"
 	@echo "... functions.o"
 	@echo "... functions.i"
@@ -173,6 +225,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/user1/cpp_core/cpp/x54 && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
