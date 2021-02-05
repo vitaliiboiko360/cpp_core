@@ -1,4 +1,4 @@
-#include "functions.h"
+#include "../functions.h"
 
 
 void reset_bits(struct bit_set_8* bits)

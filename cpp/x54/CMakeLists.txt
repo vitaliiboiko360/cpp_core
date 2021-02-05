@@ -4,15 +4,15 @@ project (app)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_PREFIX_PATH "./funx/cmake")
+set(CMAKE_PREFIX_PATH "./my_library")
 
-find_package(funx)
+find_package(my_library)
 add_executable(app main.cpp)
 
-add_subdirectory(funx)
-target_link_libraries(app PUBLIC funx)
+add_subdirectory(my_library)
+target_link_libraries(app PUBLIC my_library)
 
 target_include_directories(app PUBLIC 
 "${PROJECT_BINARY_DIR}"
-"${PROJECT_SOURCE_DIR}/funx"
+"${PROJECT_SOURCE_DIR}/my_library"
 )

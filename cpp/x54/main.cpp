@@ -1,7 +1,7 @@
 #include <iostream>
-#include "funx/functions.h"
+#include "my_library/functions.h"
 
 int main()
 {
-    std::cout<<"application uses library version: "<<funx_VERSION_MAJOR<<"."<<funx_VERSION_MINOR<<"\n";
+    std::cout<<"application uses library version: "<<my_library_VERSION_MAJOR<<"."<<my_library_VERSION_MINOR<<"\n";
 }
