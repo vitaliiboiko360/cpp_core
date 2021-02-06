@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_PREFIX_PATH "./my_library")
 
-find_package(my_library)
 add_executable(app main.cpp)
 
 add_subdirectory(my_library)
