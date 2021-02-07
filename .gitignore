@@ -10,6 +10,7 @@
 !*.js
 !CMakeLists.txt
 !*.cmake
+!*.in
 
 # files in subdirectories
 !*/
