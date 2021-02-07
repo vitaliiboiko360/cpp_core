@@ -12,6 +12,6 @@ add_subdirectory(my_library)
 target_link_libraries(app PUBLIC my_library)
 
 target_include_directories(app PUBLIC 
-"${PROJECT_BINARY_DIR}"
-"${PROJECT_SOURCE_DIR}/my_library"
+${PROJECT_BINARY_DIR}
+${PROJECT_SOURCE_DIR}/my_library
 )

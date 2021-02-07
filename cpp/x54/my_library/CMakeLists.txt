@@ -4,7 +4,3 @@ project (my_library VERSION 1.0)
 add_subdirectory(src)
 
 configure_file(config.h.in config.h)
-
-install(TARGETS my_library DESTINATION lib)
-install(FILES functions.h DESTINATION include)
-
