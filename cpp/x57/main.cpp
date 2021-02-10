@@ -1,5 +1,6 @@
 #include <iostream>
-#include "my_library/functions.h"
+#include "config.h"
+#include "my_library/client.h"
 
 int main()
 {
