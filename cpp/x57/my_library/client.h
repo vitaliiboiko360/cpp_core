@@ -1,9 +1,12 @@
 #include <stdint.h>
-
+#include <netinet/in.h>
 class my_client
 {
-    uint16_t m_port{0};
+    int m_socket_descriptor{-1};
+    struct sockaddr_in m_server_addr_info;
+    bool m_stopped{false};
 public:
-    my_client(char* host, int16_t port);
+    my_client(int16_t port);
+    ~my_client();
     void run();
 };
