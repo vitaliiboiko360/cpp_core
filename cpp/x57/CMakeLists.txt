@@ -8,6 +8,8 @@ set(CMAKE_PREFIX_PATH "./my_library")
 
 add_executable(app main.cpp)
 
+target_link_libraries(app PUBLIC pthread)
+
 add_subdirectory(my_library)
 target_link_libraries(app PUBLIC my_library)
 

@@ -1,6 +1,7 @@
 #include <netinet/in.h>
 class my_server
 {
+    socklen_t m_socket_length;
     int m_socket_descriptor;
     struct sockaddr_in m_server_addr_info;
     struct sockaddr_in m_client_addr_info;

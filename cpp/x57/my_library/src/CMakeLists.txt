@@ -1,4 +1,4 @@
-add_library (my_library SHARED client.cpp)
+add_library (my_library SHARED util.cpp client.cpp server.cpp)
 
 target_include_directories(my_library PUBLIC
                             $<BUILD_INTERFACE:${MY_LIBRARY_SOURCE_DIR}/include>

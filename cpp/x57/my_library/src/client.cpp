@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <string.h>
+#include <sstream>
 
 namespace {
     const int buffer_size_256 = 256;
@@ -40,6 +41,8 @@ void my_client::run()
         if_error_exit(num_bytes == -1, "recvfrom");
         buffer[num_bytes] = 0;
 
-        std::cout<<"client received: "<<buffer<<"\n";
+        std::stringstream out_message;
+        out_message <<"client received: "<<buffer<<"\n";
+        std::cout << out_message.str();
     }
 }
