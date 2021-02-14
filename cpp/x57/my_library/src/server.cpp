@@ -11,18 +11,22 @@
 namespace {
     const int buffer_size_256 = 256;
 
-    void identify_client_info(struct sockaddr_in* client_addr_info)
+    std::string get_str_client_info(struct sockaddr_in* client_addr_info)
     {
         char client_addr_str[INET_ADDRSTRLEN];
+        std::string ret;
         if(NULL == inet_ntop(AF_INET, &(client_addr_info->sin_addr), client_addr_str, INET_ADDRSTRLEN))
         {
-            std::cout<<"can't convert client address to string\n";
-        }
-        else
-        {
-            /* code */
+            std::cout<<"can't convert address to string\n";
+            return ret;
         }
         
+        ret = {client_addr_str};
+        ret += ":";
+        int port = ntohs(client_addr_info->sin_port);
+        ret += std::to_string(port);
+    
+        return ret;
     }
 }
 
@@ -57,19 +61,22 @@ void my_server::run()
     {
         num_bytes = recvfrom(m_socket_descriptor, buffer, buffer_size_256, 0, (struct sockaddr*)&m_client_addr_info, &m_socket_length);
         if_error_exit(num_bytes == -1, "srv recvfrom");
-
+        
         buffer[num_bytes] = 0;
 
         std::stringstream out_message;
-        out_message <<"server received: "<<buffer<<"\n";
+        out_message <<"server received: "<<buffer<<"\t";
+        out_message <<"from client "<<get_str_client_info(&m_client_addr_info)<<"\n";
         std::cout << out_message.str();
 
         int num_bytes_sent = sendto(m_socket_descriptor, message, sizeof(message), 0, (struct sockaddr *)&m_client_addr_info, m_socket_length);
-        
+        if_error_exit(num_bytes_sent != sizeof(message), "srv sendto");
+
         // out_message.str("");
         // out_message.clear();
         // out_message << "bytes to send: "<<sizeof(message)<<"\t";
         // out_message << "bytes sent: "<<num_bytes_sent<<"\n";
         // std::cout<<out_message.str();
+
     }
 }
