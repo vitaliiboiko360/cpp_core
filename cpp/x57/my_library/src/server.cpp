@@ -55,7 +55,7 @@ void my_server::run()
     char buffer[buffer_size_256];
     while(!m_stopped)
     {
-        num_bytes = recvfrom(m_socket_descriptor, buffer, 0, buffer_size_256, (struct sockaddr*)&m_client_addr_info, &m_socket_length);
+        num_bytes = recvfrom(m_socket_descriptor, buffer, buffer_size_256, 0, (struct sockaddr*)&m_client_addr_info, &m_socket_length);
         if_error_exit(num_bytes == -1, "srv recvfrom");
 
         buffer[num_bytes] = 0;
@@ -66,10 +66,10 @@ void my_server::run()
 
         int num_bytes_sent = sendto(m_socket_descriptor, message, sizeof(message), 0, (struct sockaddr *)&m_client_addr_info, m_socket_length);
         
-        out_message.str("");
-        out_message.clear();
-        out_message << "bytes to send: "<<sizeof(message)<<"\t";
-        out_message << "bytes sent: "<<num_bytes_sent<<"\n";
-        std::cout<<out_message.str();
+        // out_message.str("");
+        // out_message.clear();
+        // out_message << "bytes to send: "<<sizeof(message)<<"\t";
+        // out_message << "bytes sent: "<<num_bytes_sent<<"\n";
+        // std::cout<<out_message.str();
     }
 }
