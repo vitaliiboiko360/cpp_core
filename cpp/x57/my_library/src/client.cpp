@@ -4,9 +4,11 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <cstdlib>
+#include <chrono>
 #include <unistd.h>
 #include <string.h>
 #include <sstream>
+#include <thread>
 
 namespace {
     const int buffer_size_256 = 256;
@@ -34,6 +36,7 @@ void my_client::run()
     char buffer[buffer_size_256];
     while(!m_stopped)
     {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         num_bytes = sendto(m_socket_descriptor, message, sizeof(message), 0, (struct sockaddr*)&m_server_addr_info, sizeof(struct sockaddr_in));
         if_error_exit(num_bytes == -1, "cli sendto");
 
@@ -42,7 +45,7 @@ void my_client::run()
         buffer[num_bytes] = 0;
 
         std::stringstream out_message;
-        out_message <<"client received: "<<buffer<<"\n";
+        out_message <<"client : "<<buffer<<"\n";
         std::cout << out_message.str();
     }
 }

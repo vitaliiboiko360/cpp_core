@@ -22,9 +22,9 @@ int main()
 
     threads.emplace_back(std::thread([&srv]{srv.run();}));
     threads.emplace_back(std::thread([&cli0]{cli0.run();}));
-    threads.emplace_back(std::thread([&cli1]{cli1.run();}));
-    threads.emplace_back(std::thread([&cli2]{cli2.run();}));
-    threads.emplace_back(std::thread([&cli3]{cli3.run();}));
+    // threads.emplace_back(std::thread([&cli1]{cli1.run();}));
+    // threads.emplace_back(std::thread([&cli2]{cli2.run();}));
+    // threads.emplace_back(std::thread([&cli3]{cli3.run();}));
 
     //std::this_thread::sleep_for(std::chrono::seconds(10));
 
