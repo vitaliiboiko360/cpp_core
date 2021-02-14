@@ -15,7 +15,7 @@ namespace {
 my_client::my_client(int16_t port)
 {
     m_socket_descriptor = socket(AF_INET, SOCK_DGRAM, 0);
-    if_error_exit(m_socket_descriptor == -1, "socket");
+    if_error_exit(m_socket_descriptor == -1, "cli socket");
 
     memset(&m_server_addr_info, 0, sizeof(struct sockaddr_in));
     m_server_addr_info.sin_family = AF_INET;
@@ -35,10 +35,10 @@ void my_client::run()
     while(!m_stopped)
     {
         num_bytes = sendto(m_socket_descriptor, message, sizeof(message), 0, (struct sockaddr*)&m_server_addr_info, sizeof(struct sockaddr_in));
-        if_error_exit(num_bytes == -1, "sendto");
+        if_error_exit(num_bytes == -1, "cli sendto");
 
         num_bytes = recvfrom(m_socket_descriptor, buffer, buffer_size_256, 0, NULL, NULL);
-        if_error_exit(num_bytes == -1, "recvfrom");
+        if_error_exit(num_bytes == -1, "cli recvfrom");
         buffer[num_bytes] = 0;
 
         std::stringstream out_message;

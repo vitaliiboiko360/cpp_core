@@ -30,7 +30,7 @@ my_server::my_server(const char* address, uint16_t port)
 {
     m_socket_length = sizeof(struct sockaddr_in);
     m_socket_descriptor = socket(AF_INET, SOCK_DGRAM, 0);
-    if_error_exit(m_socket_descriptor == -1, "socket");
+    if_error_exit(m_socket_descriptor == -1, "srv socket");
 
     memset(&m_server_addr_info, 0, sizeof(struct sockaddr_in));
     m_server_addr_info.sin_family = AF_INET;
@@ -56,7 +56,7 @@ void my_server::run()
     while(!m_stopped)
     {
         num_bytes = recvfrom(m_socket_descriptor, buffer, 0, buffer_size_256, (struct sockaddr*)&m_client_addr_info, &m_socket_length);
-        if_error_exit(num_bytes == -1, "recvfrom");
+        if_error_exit(num_bytes == -1, "srv recvfrom");
 
         buffer[num_bytes] = 0;
 
@@ -65,6 +65,11 @@ void my_server::run()
         std::cout << out_message.str();
 
         int num_bytes_sent = sendto(m_socket_descriptor, message, sizeof(message), 0, (struct sockaddr *)&m_client_addr_info, m_socket_length);
-        if_error_exit(num_bytes != num_bytes_sent, "sendto");
+        
+        out_message.str("");
+        out_message.clear();
+        out_message << "bytes to send: "<<sizeof(message)<<"\t";
+        out_message << "bytes sent: "<<num_bytes_sent<<"\n";
+        std::cout<<out_message.str();
     }
 }
