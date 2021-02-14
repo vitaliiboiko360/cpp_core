@@ -64,7 +64,9 @@ int server_main()
 {
     my_server srv(localhost, port_number);
     std::vector<std::thread> threads;
+
     threads.emplace_back(std::thread([&srv]{srv.run();}));
 
+    for_each(threads.begin(), threads.end(), [](std::thread& t){t.join();});
     return 0;
 }
