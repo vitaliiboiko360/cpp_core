@@ -5,7 +5,7 @@ project(app)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(OBJS
+set(USOCKETS_OBJS
 "/home/user1/uSockets/wolfssl.o"
 "/home/user1/uSockets/libuv.o"
 "/home/user1/uSockets/socket.o"
@@ -17,7 +17,7 @@ set(OBJS
 "/home/user1/uSockets/openssl.o"
 )
 
-add_executable(app main.cpp ${OBJS})
+add_executable(app main.cpp)
 
 target_include_directories(app PUBLIC
 "/home/user1/uWebSocket/src"
@@ -26,11 +26,12 @@ target_include_directories(app PUBLIC
 target_link_libraries(app PUBLIC
 pthread
 z
+${USOCKETS_OBJS}
 )
 
-set_source_files_properties(
-  ${OBJS}
-  PROPERTIES
-  EXTERNAL_OBJECT true
-  GENERATED true
-)
+#set_source_files_properties(
+#  ${USOCKETS_OBJS}
+#  PROPERTIES
+#  EXTERNAL_OBJECT true
+#  GENERATED true
+#)
