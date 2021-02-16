@@ -1,12 +1,12 @@
 #include "../../../uWebSockets/src/App.h"
-#include "../../../uWebSockets/examples/helpers/Middleware.h"
-#include "../../../uWebSockets/examples/helpers/AsyncFileStreamer.h"
 #include "../../../uWebSockets/src/HttpParser.h"
+#include "helpers/Middleware.h"
+#include "helpers/AsyncFileStreamer.h"
 
 int main()
 {
     int port = 3000;
-    std::string root = ".";
+    std::string root = "./html";
     AsyncFileStreamer asyncFileStreamer(root);
 
     auto app = uWS::App().get("/*", [&asyncFileStreamer](auto *res, auto *req) {
