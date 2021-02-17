@@ -10,9 +10,10 @@ int main()
     AsyncFileStreamer asyncFileStreamer(root);
 
     auto app = uWS::App().get("/*", [&asyncFileStreamer](auto *res, auto *req) {
-            serveFile(res, req);
+            
             //auto url = req->getUrl();
             asyncFileStreamer.streamFile(res, req->getUrl());
+            serveFile(res, req);
         });
 
     app.listen(port, [port, root](auto *token) {
