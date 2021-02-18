@@ -23,10 +23,26 @@ public:
     }
     my_string(const my_string& r)
     {
-        print_id((void*)&r, "const my_string& =");
+        print_id((void*)&r, "const my_string& r=");
         print_id("my_string(const my_string& r)");
     }
-
+    my_string& operator=(const my_string& r)
+    {
+        print_id((void*)&r, "const my_string& r=");
+        print_id("operator=(const my_string&)");
+        return *this;
+    }
+    my_string(my_string&& r)
+    {
+        print_id((void*)&r, "my_string&& r =");
+        print_id("my_string(my_string&& r)");
+    }
+    my_string& operator=(const my_string&& r)
+    {
+        print_id((void*)&r, "const my_string&& r=");
+        print_id("operator=(const my_string&&)");
+        return *this;
+    }
 
 private:
     void print_id(string msg = "") {std::cout<<msg<<std::hex<<(int64_t(this) & 0xffff)<<std::endl;}
