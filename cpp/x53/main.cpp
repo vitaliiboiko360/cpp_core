@@ -2,6 +2,7 @@
 #include "../../../uWebSockets/src/HttpParser.h"
 #include "helpers/Middleware.h"
 #include "helpers/AsyncFileStreamer.h"
+#include <iostream>
 
 int main()
 {
@@ -12,7 +13,15 @@ int main()
     auto app = uWS::App().get("/*", [&asyncFileStreamer](auto *res, auto *req) {
             
             //auto url = req->getUrl();
+            auto offset = res->getWriteOffset();
             asyncFileStreamer.streamFile(res, req->getUrl());
+            if(res->getWriteOffset() == offset)
+            {
+                res->writeStatus("404 Not Found");
+                res->tryEnd("");
+                std::cout<<req->getUrl()<<std::endl;
+                return;
+            }
             serveFile(res, req);
         });
 
