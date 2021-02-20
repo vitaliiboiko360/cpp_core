@@ -1,0 +1,5 @@
+
+class my_client
+{
+
+};
