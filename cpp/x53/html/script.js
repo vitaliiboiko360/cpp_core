@@ -7,25 +7,29 @@
     var buttonConnect = document.getElementById("button_connect");
     buttonConnect.addEventListener("click", connectWebSocket);
 
-    var webSocketId;
-    
+    var webSocket;
+
     function connectWebSocket(){
       var srvConnectionString = "ws://" + window.location.hostname + ':' + `${parseInt(window.location.port)}`;
-      console.log(srvConnectionString);
-      var webSocket = new WebSocket("ws://localhost:3000");
-      webSocketId = webSocket;
+      webSocket = new WebSocket("ws://localhost:3000");
       webSocket.onmessage = function(event) {
-        paragraph.innerHTML() = event.data
+        paragraph.innerHTML = event.data
       }
     }
 
     var buttonClose = document.getElementById("button_close");
     buttonClose.onclick = function() {
 
-      if(webSocketId != undefined)
+      if(webSocket != undefined)
       {
-        webSocketId.close();
+        webSocket.close();
       }
+    }
+
+    var buttonSend = document.getElementById("button_send");
+    buttonSend.onclick = function() {
+      var textFieldContent = document.getElementById("text_field");
+      webSocket.send(textFieldContent.value);
     }
 
   })();
