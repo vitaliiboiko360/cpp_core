@@ -8,8 +8,10 @@
     buttonConnect.addEventListener("click", connectWebSocket);
 
     var webSocketId;
+    
     function connectWebSocket(){
       var srvConnectionString = "ws://" + window.location.hostname + ':' + `${parseInt(window.location.port)}`;
+      console.log(srvConnectionString);
       var webSocket = new WebSocket("ws://localhost:3000");
       webSocketId = webSocket;
       webSocket.onmessage = function(event) {

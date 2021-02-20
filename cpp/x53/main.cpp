@@ -49,10 +49,11 @@ int main()
                     context);
             },
             .open = [](auto *ws) {
-
+                std::cout<<"open ws id "<< static_cast<PerSocketData *>(ws->getUserData())->_id << std::endl;
             },
             .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
                 ws->send(message, opCode);
+                std::cout<<"message "<<message<<std::endl;
             },
             .drain = [](auto *ws) {
                 /* Check getBufferedAmount here */
