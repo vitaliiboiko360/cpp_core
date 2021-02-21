@@ -13,7 +13,7 @@ my_server::my_server(uint16_t port)
     memset(&_server_addrinfo, 0, sizeof(struct sockaddr_in));
 
     _server_addrinfo.sin_family = AF_INET;
-    _server_addrinfo.sin_addr = INADDR_ANY;
+    _server_addrinfo.sin_addr.s_addr = htonl(INADDR_ANY);
     _server_addrinfo.sin_port = htons(port);
 }
 
