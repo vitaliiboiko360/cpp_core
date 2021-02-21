@@ -1,4 +1,4 @@
-file(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "*.cpp")
 
 add_library(my_library SHARED ${SOURCES})
 

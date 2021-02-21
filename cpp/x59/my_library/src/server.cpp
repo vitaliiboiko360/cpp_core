@@ -7,7 +7,7 @@
 
 my_server::my_server(uint16_t port)
 {
-    _socket_file_descriptor = socket(AF_INET, SOCK_RAW, 0);
+    _socket_file_descriptor = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     if_error_exit(_socket_file_descriptor == -1, "socket");
 
     memset(&_server_addrinfo, 0, sizeof(struct sockaddr_in));
@@ -22,7 +22,7 @@ my_server::~my_server()
     close(_socket_file_descriptor);
 }
 
-void my_server::void()
+void my_server::run()
 {
 
 }
