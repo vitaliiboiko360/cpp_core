@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 my_server::my_server(uint16_t port)
 {
@@ -14,6 +15,11 @@ my_server::my_server(uint16_t port)
     _server_addrinfo.sin_family = AF_INET;
     _server_addrinfo.sin_addr = INADDR_ANY;
     _server_addrinfo.sin_port = htons(port);
+}
+
+my_server::~my_server()
+{
+    close(_socket_file_descriptor);
 }
 
 void my_server::void()
