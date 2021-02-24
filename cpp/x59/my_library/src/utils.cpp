@@ -8,6 +8,9 @@
 
 void if_error_exit(bool error_check, std::string msg)
 {
-    std::cout<<msg<<" "<<strerror(errno)<<std::endl;
+    if(error_check)
+    {
+            std::cout<<msg<<" "<<strerror(errno)<<std::endl;
     std::exit(1);
+    }
 }

@@ -1,6 +1,7 @@
 #include "../server.h"
 #include "../utils.h"
 
+#include <iostream>
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -9,6 +10,7 @@
 my_server::my_server(uint16_t port)
 {
     _socket_file_descriptor = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
+
     if_error_exit(_socket_file_descriptor == -1, "srv socket");
 
     memset(&_server_addrinfo, 0, sizeof(struct sockaddr_in));
