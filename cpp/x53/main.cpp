@@ -3,8 +3,10 @@
 #include "helpers/Middleware.h"
 #include "helpers/AsyncFileStreamer.h"
 #include <atomic>
+#include <vector>
 #include <iostream>
 #include <string>
+#include <regex>
 
 std::atomic<int> g_id_counter{ 1 };
 
@@ -31,6 +33,8 @@ int main()
             }
             serveFile(res, req);
         });
+    const bool SSL{false};
+    std::vector<uWS::WebSocket<SSL, true>*> websockets;
 
     app.ws<PerSocketData>("/*", {
             /* Settings */
@@ -48,8 +52,9 @@ int main()
                     req->getHeader("sec-websocket-extensions"),
                     context);
             },
-            .open = [](auto *ws) {
+            .open = [&websockets](auto *ws) {
                 std::cout<<"open ws id "<< static_cast<PerSocketData *>(ws->getUserData())->_id << std::endl;
+                websockets.push_back(ws);
             },
             .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
                 ws->send(message, opCode);
@@ -65,7 +70,7 @@ int main()
 
             },
             .close = [](auto *ws, int code, std::string_view message) {
-
+                std::cout<<"close ws id "<<static_cast<PerSocketData *>(ws->getUserData())->_id << std::endl;
             }
         });
 
@@ -76,6 +81,34 @@ int main()
     }); 
 
     app.run();
+    
+    // while(true)
+    // {
+    //     std::string msg{R"(<svg width="100" height="100">
+    //                     <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="{COLOR}" />
+    //                     </svg>)"};
+    //     std::string msg_out;               
+    //     switch(std::rand() % 3)
+    //     {
+    //         case 0: msg_out = R"(<svg width="100" height="100">
+    //                     <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="red" />
+    //                     </svg>)";
+    //         case 1: msg_out = R"(<svg width="100" height="100">
+    //                     <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="green" />
+    //                     </svg>)";
+    //         default: msg_out = R"(<svg width="100" height="100">
+    //                     <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="blue" />
+    //                     </svg>)";
+    //     }
+        
+    //     for(auto& w : websockets)
+    //     {
+    //         w->send(msg_out, uWS::OpCode::TEXT);
+    //     }
+    //     //send(msg, uWS::OpCode::TEXT);
+    //     std::this_thread::sleep_for(std::chrono::duration<double>(1000));
+    // }
 
+    std::cout<<"after run()\n";
     return 0;
 }
