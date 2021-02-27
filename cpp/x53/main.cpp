@@ -16,11 +16,16 @@ struct PerSocketData {
 
 int main()
 {
+    
     int port = 3000;
     std::string root = "./html";
     AsyncFileStreamer asyncFileStreamer(root);
 
-    auto app = uWS::App().get("/*", [&asyncFileStreamer](auto *res, auto *req) {
+    const bool SSL{false};
+    std::vector<uWS::WebSocket<SSL, true>*> websockets;
+
+    std::thread t1{[&port, &root, &asyncFileStreamer, &websockets](){
+        auto app = uWS::App().get("/*", [&asyncFileStreamer](auto *res, auto *req) {
             //auto url = req->getUrl();
             auto offset = res->getWriteOffset();
             asyncFileStreamer.streamFile(res, req->getUrl());
@@ -33,54 +38,53 @@ int main()
             }
             serveFile(res, req);
         });
-    const bool SSL{false};
-    std::vector<uWS::WebSocket<SSL, true>*> websockets;
 
-    app.ws<PerSocketData>("/*", {
-            /* Settings */
-            .compression = uWS::DISABLED,
-            .maxPayloadLength = 16 * 1024,
-            .idleTimeout = 10,
-            .maxBackpressure = 1 * 1024 * 1024,
-            /* Handlers */
-            .upgrade = [](auto *res, auto *req, auto *context) {
-                    res->template upgrade<PerSocketData>({
-                    /* We initialize PerSocketData struct here */
-                    ._id = g_id_counter.fetch_add(1)
-                }, req->getHeader("sec-websocket-key"),
-                    req->getHeader("sec-websocket-protocol"),
-                    req->getHeader("sec-websocket-extensions"),
-                    context);
-            },
-            .open = [&websockets](auto *ws) {
-                std::cout<<"open ws id "<< static_cast<PerSocketData *>(ws->getUserData())->_id << std::endl;
-                websockets.push_back(ws);
-            },
-            .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
-                ws->send(message, opCode);
-                std::cout<<"message "<<message<<std::endl;
-            },
-            .drain = [](auto *ws) {
-                /* Check getBufferedAmount here */
-            },
-            .ping = [](auto *ws) {
+        app.ws<PerSocketData>("/*", {
+                /* Settings */
+                .compression = uWS::DISABLED,
+                .maxPayloadLength = 16 * 1024,
+                .idleTimeout = 10,
+                .maxBackpressure = 1 * 1024 * 1024,
+                /* Handlers */
+                .upgrade = [](auto *res, auto *req, auto *context) {
+                        res->template upgrade<PerSocketData>({
+                        /* We initialize PerSocketData struct here */
+                        ._id = g_id_counter.fetch_add(1)
+                    }, req->getHeader("sec-websocket-key"),
+                        req->getHeader("sec-websocket-protocol"),
+                        req->getHeader("sec-websocket-extensions"),
+                        context);
+                },
+                .open = [&websockets](auto *ws) {
+                    std::cout<<"open ws id "<< static_cast<PerSocketData *>(ws->getUserData())->_id << std::endl;
+                    websockets.push_back(ws);
+                },
+                .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
+                    ws->send(message, opCode);
+                    std::cout<<"message "<<message<<std::endl;
+                },
+                .drain = [](auto *ws) {
+                    /* Check getBufferedAmount here */
+                },
+                .ping = [](auto *ws) {
 
-            },
-            .pong = [](auto *ws) {
+                },
+                .pong = [](auto *ws) {
 
-            },
-            .close = [](auto *ws, int code, std::string_view message) {
-                std::cout<<"close ws id "<<static_cast<PerSocketData *>(ws->getUserData())->_id << std::endl;
+                },
+                .close = [](auto *ws, int code, std::string_view message) {
+                    std::cout<<"close ws id "<<static_cast<PerSocketData *>(ws->getUserData())->_id << std::endl;
+                }
+            });
+
+        app.listen(port, [port, root](auto *token) {
+            if (token) {
+                std::cout << "Serving " << root << " over HTTP a " << port << std::endl;
             }
-        });
+        }); 
 
-    app.listen(port, [port, root](auto *token) {
-        if (token) {
-            std::cout << "Serving " << root << " over HTTP a " << port << std::endl;
-        }
-    }); 
-
-    app.run();
+        app.run();
+    }};
     
     // while(true)
     // {
@@ -109,6 +113,8 @@ int main()
     //     std::this_thread::sleep_for(std::chrono::duration<double>(1000));
     // }
 
-    std::cout<<"after run()\n";
+    std::cout<<"after t1 created\n";
+    
+    t1.join();
     return 0;
 }
