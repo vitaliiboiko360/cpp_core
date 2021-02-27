@@ -89,19 +89,23 @@ int main()
     while(true)
     {
         std::string msg{R"(<svg width="100" height="100">
-                        <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="{COLOR}" />
+                        <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="{COLOR}" />
                         </svg>)"};
-        std::string msg_out;               
-        switch(std::rand() % 3)
+        std::string msg_out;  
+        int i = std::rand() % 3;
+        std::cout<<"passed to switch i="<<i<<std::endl;             
+        switch(i)
         {
             case 0: msg_out = R"(<svg width="100" height="100">
-                        <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="red" />
+                        <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="red" />
                         </svg>)";
+                    break;
             case 1: msg_out = R"(<svg width="100" height="100">
-                        <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="green" />
+                        <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="green" />
                         </svg>)";
+                    break;
             default: msg_out = R"(<svg width="100" height="100">
-                        <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="blue" />
+                        <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="yellow" />
                         </svg>)";
         }
         
