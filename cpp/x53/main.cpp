@@ -61,7 +61,7 @@ int main()
                 },
                 .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
                     ws->send(message, opCode);
-                    std::cout<<"message "<<message<<std::endl;
+                    std::cout<<"message from id "<<static_cast<PerSocketData *>(ws->getUserData())->_id<<" : "<<message<<std::endl;
                 },
                 .drain = [](auto *ws) {
                     /* Check getBufferedAmount here */
@@ -86,32 +86,35 @@ int main()
         app.run();
     }};
     
-    // while(true)
-    // {
-    //     std::string msg{R"(<svg width="100" height="100">
-    //                     <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="{COLOR}" />
-    //                     </svg>)"};
-    //     std::string msg_out;               
-    //     switch(std::rand() % 3)
-    //     {
-    //         case 0: msg_out = R"(<svg width="100" height="100">
-    //                     <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="red" />
-    //                     </svg>)";
-    //         case 1: msg_out = R"(<svg width="100" height="100">
-    //                     <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="green" />
-    //                     </svg>)";
-    //         default: msg_out = R"(<svg width="100" height="100">
-    //                     <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="blue" />
-    //                     </svg>)";
-    //     }
+    while(true)
+    {
+        std::string msg{R"(<svg width="100" height="100">
+                        <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="{COLOR}" />
+                        </svg>)"};
+        std::string msg_out;               
+        switch(std::rand() % 3)
+        {
+            case 0: msg_out = R"(<svg width="100" height="100">
+                        <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="red" />
+                        </svg>)";
+            case 1: msg_out = R"(<svg width="100" height="100">
+                        <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="green" />
+                        </svg>)";
+            default: msg_out = R"(<svg width="100" height="100">
+                        <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="blue" />
+                        </svg>)";
+        }
         
-    //     for(auto& w : websockets)
-    //     {
-    //         w->send(msg_out, uWS::OpCode::TEXT);
-    //     }
-    //     //send(msg, uWS::OpCode::TEXT);
-    //     std::this_thread::sleep_for(std::chrono::duration<double>(1000));
-    // }
+        std::cout<<"websocket.size()= "<<websockets.size()<<std::endl;
+        for(auto& w : websockets)
+        {
+            w->send(msg_out, uWS::OpCode::TEXT);
+            std::cout<<"sent to ws: "<<static_cast<PerSocketData *>(w->getUserData())->_id<<std::endl;
+        }
+        
+        //send(msg, uWS::OpCode::TEXT);
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
 
     std::cout<<"after t1 created\n";
     
