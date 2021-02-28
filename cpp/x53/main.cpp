@@ -8,9 +8,11 @@
 #include <string>
 #include <regex>
 
+const bool SSL{false};
 std::atomic<int> g_id_counter{ 1 };
 
 struct PerSocketData {
+    bool _is_active{false};
     int _id{ -1 };
 };
 
@@ -21,6 +23,21 @@ std::string replace(const std::string& str, const std::string& from, const std::
         return ret;
     
     return ret.replace(start_pos, from.length(), to);
+}
+
+int get_websocket_id(uWS::WebSocket<SSL, true>* ws)
+{
+    return static_cast<PerSocketData *>(ws->getUserData())->_id;
+}
+
+void set_websocket_state(uWS::WebSocket<SSL, true>* ws, bool is_active)
+{
+    static_cast<PerSocketData *>(ws->getUserData())->_is_active = is_active;
+}
+
+bool get_websocket_state(uWS::WebSocket<SSL, true>* ws)
+{
+    return static_cast<PerSocketData *>(ws->getUserData())->_is_active;
 }
 
 int main()
@@ -58,6 +75,7 @@ int main()
                 .upgrade = [](auto *res, auto *req, auto *context) {
                         res->template upgrade<PerSocketData>({
                         /* We initialize PerSocketData struct here */
+                        ._is_active = true,
                         ._id = g_id_counter.fetch_add(1)
                     }, req->getHeader("sec-websocket-key"),
                         req->getHeader("sec-websocket-protocol"),
@@ -65,12 +83,12 @@ int main()
                         context);
                 },
                 .open = [&websockets](auto *ws) {
-                    std::cout<<"open ws id "<< static_cast<PerSocketData *>(ws->getUserData())->_id << std::endl;
+                    std::cout<<"open ws id "<< get_websocket_id(ws) << std::endl;
                     websockets.push_back(ws);
                 },
                 .message = [](auto *ws, std::string_view message, uWS::OpCode opCode) {
                     ws->send(message, opCode);
-                    std::cout<<"message from id "<<static_cast<PerSocketData *>(ws->getUserData())->_id<<" : "<<message<<std::endl;
+                    std::cout<<"message from id "<<get_websocket_id(ws)<<" : "<<message<<std::endl;
                 },
                 .drain = [](auto *ws) {
                     /* Check getBufferedAmount here */
@@ -82,7 +100,8 @@ int main()
 
                 },
                 .close = [](auto *ws, int code, std::string_view message) {
-                    std::cout<<"close ws id "<<static_cast<PerSocketData *>(ws->getUserData())->_id << std::endl;
+                    set_websocket_state(ws, false);
+                    std::cout<<"close ws id "<<get_websocket_id(ws)<< std::endl;
                 }
             });
 
@@ -117,10 +136,13 @@ int main()
         }
         
         std::cout<<"websocket.size()= "<<websockets.size()<<std::endl;
-        for(auto& w : websockets)
+        for(auto w : websockets)
         {
-            w->send(msg_out, uWS::OpCode::TEXT);
-            std::cout<<"sent to ws: "<<static_cast<PerSocketData *>(w->getUserData())->_id<<std::endl;
+            if(get_websocket_state(w))
+            {
+                w->send(msg_out, uWS::OpCode::TEXT);
+                std::cout<<"sent to ws: "<<get_websocket_id(w)<<std::endl;
+            }
         }
         
         //send(msg, uWS::OpCode::TEXT);
