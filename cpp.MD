@@ -1,3 +1,9 @@
+#### static
+1. static variable in functions
+2. static class objects
+3. static member variable in class
+4. static member methods in class
+
 #### std::variant<>
 ```cpp
 std::variant<int, std::string> var{"hi"};
