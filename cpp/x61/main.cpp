@@ -59,6 +59,10 @@ int srv_main()
     int socket_id = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     if_true_exit(socket_id == -1, "srv socket");
 
+    const int on = 1;
+    if_true_exit(-1 == setsockopt(socket_id, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on)),
+    "setsockopt");
+
     unsigned char* buffer = (unsigned char*)malloc(UINT16_MAX);
     memset(buffer, 0, UINT16_MAX);
     struct sockaddr sock_addr_info;
@@ -72,22 +76,25 @@ int srv_main()
     unsigned short ip_header_length;
     struct iphdr* ip_header = (struct iphdr*)(buffer);
 
-    memset(&src_inet_sockaddr_info, 0, sizeof(src_inet_sockaddr_info));
-    src_inet_sockaddr_info.sin_addr.s_addr = ip_header->saddr;
-    memset(&dest_inet_sockaddr_info, 0, sizeof(dest_inet_sockaddr_info));
-    dest_inet_sockaddr_info.sin_addr.s_addr = ip_header->daddr;
+    // memset(&src_inet_sockaddr_info, 0, sizeof(src_inet_sockaddr_info));
+    // src_inet_sockaddr_info.sin_addr.s_addr = ip_header->saddr;
+    // memset(&dest_inet_sockaddr_info, 0, sizeof(dest_inet_sockaddr_info));
+    // dest_inet_sockaddr_info.sin_addr.s_addr = ip_header->daddr;
 
-    printf("version: %d ", (unsigned int)ip_header->version);
-    printf("internet header length: %d or %d bytes ", (unsigned int)ip_header->ihl, (unsigned int)ip_header->ihl*4);
-    printf("type of service: %d ", (unsigned int)ip_header->tos);
-    printf("total length: %d bytes ", ntohs(ip_header->tot_len));
-    printf("identification: %d ", ntohs(ip_header->id));
-    printf("time to live: %d ", ntohs(ip_header->ttl));
-    printf("protocol: %d ", (unsigned int)ip_header->protocol);
-    printf("header checksum: %d ", ntohs(ip_header->check));
-    printf("source ip: %s ", inet_ntoa(src_inet_sockaddr_info.sin_addr));
-    printf("destination ip: %s ", inet_ntoa(dest_inet_sockaddr_info.sin_addr));
+    // printf("version: %d ", (unsigned int)ip_header->version);
+    // printf("internet header length: %d or %d bytes ", (unsigned int)ip_header->ihl, (unsigned int)ip_header->ihl*4);
+    // printf("type of service: %d ", (unsigned int)ip_header->tos);
+    // printf("total length: %d bytes ", ntohs(ip_header->tot_len));
+    // printf("identification: %d ", ntohs(ip_header->id));
+    // printf("time to live: %d ", ntohs(ip_header->ttl));
+    // printf("protocol: %d ", (unsigned int)ip_header->protocol);
+    // printf("header checksum: %d ", ntohs(ip_header->check));
+    // printf("source ip: %s ", inet_ntoa(src_inet_sockaddr_info.sin_addr));
+    // printf("destination ip: %s ", inet_ntoa(dest_inet_sockaddr_info.sin_addr));
 
+    printf("received: %s\n", buffer);
+
+    free(buffer);
     return 0;
 }
 
@@ -95,6 +102,24 @@ int cli_main()
 {
     int socket_id = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     if_true_exit(socket_id == -1, "cli socket");
+
+    struct sockaddr sock_addr_info;
+    int sock_addr_info_length = sizeof(sock_addr_info);
+
+    const int on = 1;
+    if_true_exit(-1 == setsockopt(socket_id, IPPROTO_IP, IP_HDRINCL, &on, sizeof(on)),
+    "setsockopt");
+
+    unsigned char* buffer = (unsigned char*)malloc(UINT16_MAX);
+    memset(buffer, 0, UINT16_MAX);
+    
+    for(int i=0; i<UINT16_MAX; i++)
+    {
+        buffer[i] = 'A';
+    }
+
+    printf("buffer before send: %.*s\n", UINT64_WIDTH, buffer);
+    sendto(socket_id, buffer, UINT16_MAX, 0, &sock_addr_info, sock_addr_info_length);
     
     return 0;
 }
