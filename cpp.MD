@@ -1,3 +1,71 @@
+#### static
+1. static variable in functions
+initialized only once, and then hold there value thorugh function calls.
+a static variable inside a function keeps its value between invocations.
+static variables are stored on static storage area, not in stack.
+```cpp
+int counter() {
+static int count=0;
+return count++;
+}
+```
+
+2. static class objects
+object declared static are allocated in static storage area, and have scope till the end of program.
+static object initalized using constructors. assignment to zero is only for primitive datatypes, not for user-defined datatypes.
+```cpp
+class Abc {
+int i;
+Abc() { i=0; }
+~Abc() {}
+};
+
+void f() {
+static Abc obj;
+}
+
+int main() {
+f();
+// destructor ~Abc() not called yet
+// ...
+}
+```
+
+3. static member variable in class
+static data members are shared by all the objects. it has a single piece of storage, and is not available as separate copy with each object. 
+itialized not from constructor/object inialization.
+must be inialized explicitly outside the class. linker error if not initalized.
+```cpp
+class X {
+public:
+static int i;
+};
+
+int X::i=1;
+
+int main() {
+X obj;
+}
+```
+
+4. static member methods in class
+static member class functions could be used w/o an object of the class.
+these functions cannot access non-static data members, but only static members and static member functions.
+```cpp
+class X {
+public:
+static void f() {
+// ...
+}
+};
+
+int main() {
+X::f(); // calling static member function directly with class name
+}
+```
+5. Static global variables or functions
+are "seen" only in the file it's declared in
+
 #### std::variant<>
 ```cpp
 std::variant<int, std::string> var{"hi"};
