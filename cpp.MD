@@ -52,6 +52,7 @@ static member class functions could be used w/o an object of the class.
 these functions cannot access non-static data members, but only static members and static member functions.
 ```cpp
 class X {
+public:
 static void f() {
 // ...
 }
