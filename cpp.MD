@@ -62,6 +62,8 @@ int main() {
 X::f(); // calling static member function directly with class name
 }
 ```
+5. Static global variables or functions
+are "seen" only in the file it's declared in
 
 #### std::variant<>
 ```cpp
