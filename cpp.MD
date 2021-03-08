@@ -1,6 +1,7 @@
 #### static
 1. static variable in functions
 initialized only once, and then hold there value thorugh function calls.
+a static variable inside a function keeps its value between invocations.
 static variables are stored on static storage area, not in stack.
 ```cpp
 int counter() {
