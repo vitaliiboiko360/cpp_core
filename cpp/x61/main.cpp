@@ -1,5 +1,6 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#include <netdb.h>
 #include <netinet/if_ether.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -54,8 +55,31 @@ int main(int argc, char* argv[])
     }
 }
 
+void ask_user_which_ip_to_use()
+{
+    struct addrinfo hints;
+    struct addrinfo* results;
+    struct addrinfo* results_cursor;
+    memset(&hints, 0, sizeof(struct addrinfo));
+
+    hints.ai_socktype = SOCK_RAW;
+    hints.ai_family = AF_INET;
+
+    if_true_exit(0 == getaddrinfo(NULL, NULL, &hints, &results), "getaddrinfo");
+
+    int index = 0;
+    printf("operating system gives us following addresses to use:\n");
+    for(results_cursor = results; results_cursor != NULL; results_cursor = results_cursor->ai_next)
+    {
+        printf("%d. family:%d socktype:%d proto:%d\n", index, results_cursor->ai_family, results_cursor->ai_socktype, results_cursor->ai_protocol);
+        index++;
+    }
+}
+
 int srv_main()
 {
+    ask_user_which_ip_to_use();
+
     int socket_id = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     if_true_exit(socket_id == -1, "srv socket");
 
@@ -121,5 +145,6 @@ int cli_main()
     printf("buffer before send: %.*s\n", UINT64_WIDTH, buffer);
     sendto(socket_id, buffer, UINT16_MAX, 0, &sock_addr_info, sock_addr_info_length);
     
+    free(buffer);
     return 0;
 }
