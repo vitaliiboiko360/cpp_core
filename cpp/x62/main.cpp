@@ -125,7 +125,6 @@ int main (void)
 	
 	udph->check = csum( (unsigned short*) pseudogram , psize);
 	
-	//loop if you want to flood :)
 	while (1)
 	{
 		//Send the packet
