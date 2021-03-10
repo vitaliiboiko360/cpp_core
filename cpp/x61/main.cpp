@@ -65,7 +65,9 @@ void ask_user_which_ip_to_use()
     hints.ai_socktype = SOCK_RAW;
     hints.ai_family = AF_INET;
 
-    if_true_exit(0 == getaddrinfo(NULL, NULL, &hints, &results), "getaddrinfo");
+    //if_true_exit(0 != getaddrinfo(NULL, NULL, &hints, &results), "getaddrinfo");
+    int getaddrinfo_status = getaddrinfo(NULL, NULL, &hints, &results);
+    printf("getaddrinfo returned: %d\n", getaddrinfo_status);
 
     int index = 0;
     printf("operating system gives us following addresses to use:\n");
