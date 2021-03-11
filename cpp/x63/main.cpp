@@ -85,7 +85,7 @@ int main (void)
 	strcpy(source_ip , "192.168.129.132");
 	
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(80);
+	sin.sin_port = htons(8888);
 	sin.sin_addr.s_addr = inet_addr("192.168.129.132");
 	
 	//Fill in the IP Header
@@ -105,8 +105,8 @@ int main (void)
 	iph->check = csum ((unsigned short *) datagram, iph->tot_len);
 	
 	//UDP header
-	udph->source = htons (6666);
-	udph->dest = htons (8622);
+	udph->source = htons (8622);
+	udph->dest = htons (6666);
 	udph->len = htons(8 + strlen(data));	//tcp header size
 	udph->check = 0;	//leave checksum 0 now, filled later by pseudo header
 	

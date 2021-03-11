@@ -85,7 +85,7 @@ int main (void)
 	strcpy(source_ip , "192.168.129.132");
 	
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(80);
+	sin.sin_port = htons(8888);
 	sin.sin_addr.s_addr = inet_addr("192.168.129.132");
 	
 	//Fill in the IP Header
