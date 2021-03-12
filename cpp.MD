@@ -1,3 +1,23 @@
+#### transform()
+```cpp
+int square(int elem)
+{
+    return elem * elem;
+}
+...
+transform(coll.cbegin(), coll.cend(), coll.begin(), square);
+```
+
+#### for_each()
+```cpp
+void square(int& elem)
+{
+    elem = elem * elem;
+}
+...
+for_each(coll.begin(), coll.end(), square);
+```
+
 #### static
 1. static variable in functions
 initialized only once, and then hold there value thorugh function calls.
