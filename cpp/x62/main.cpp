@@ -96,7 +96,7 @@ int main (void)
 	iph->id = htonl (54321);	//Id of this packet
 	iph->frag_off = 0;
 	iph->ttl = 255;
-	iph->protocol = IPPROTO_UDP;
+	iph->protocol = IPPROTO_RAW;
 	iph->check = 0;		//Set to 0 before calculating checksum
 	iph->saddr = inet_addr ( source_ip );	//Spoof the source ip address
 	iph->daddr = sin.sin_addr.s_addr;
@@ -114,7 +114,7 @@ int main (void)
 	psh.source_address = inet_addr( source_ip );
 	psh.dest_address = sin.sin_addr.s_addr;
 	psh.placeholder = 0;
-	psh.protocol = IPPROTO_UDP;
+	psh.protocol = IPPROTO_RAW;
 	psh.udp_length = htons(sizeof(struct udphdr) + strlen(data) );
 	
 	int psize = sizeof(struct pseudo_header) + sizeof(struct udphdr) + strlen(data);
