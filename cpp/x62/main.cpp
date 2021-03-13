@@ -82,11 +82,11 @@ int main (void)
 	strcpy(data , "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	
 	//some address resolution
-	strcpy(source_ip , "192.168.129.132");
+	strcpy(source_ip , "127.0.0.1");
 	
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(8888);
-	sin.sin_addr.s_addr = inet_addr("192.168.129.132");
+	sin.sin_addr.s_addr = inet_addr("127.0.0.1");
 	
 	//Fill in the IP Header
 	iph->ihl = 5;
