@@ -125,14 +125,18 @@ int main (void)
 	
 	udph->check = csum( (unsigned short*) pseudogram , psize);
 	
+	struct sockaddr_in sock_addr_info;
+	socklen_t sock_size = sizeof(struct sockaddr_in);
 	while (1)
 	{
+		memset(&sock_addr_info, 0, sock_size);
+
 		char buffer[UINT16_MAX];
 		memset(buffer, 0, UINT16_MAX);
 		int bytes_recv;
 		printf("before call to recvfrom\n");
 		//bytes_recv = recvfrom (s, buffer, UINT16_MAX, 0, (struct sockaddr *) &sin, (socklen_t*)sizeof (sin));
-		bytes_recv = recvfrom (s, buffer, UINT16_MAX, 0, NULL, NULL);
+		bytes_recv = recvfrom (s, buffer, UINT16_MAX, 0, (struct sockaddr*)&sock_addr_info, &sock_size);
 		//Recv the packet
 		if (bytes_recv == -1)
 		{
@@ -141,7 +145,12 @@ int main (void)
 		//Data recv successfully
 		else
 		{
-			printf ("Packet Received. : ");
+			
+			printf("Packet Received from ");
+			char address_name[UINT16_WIDTH] = "000.000.000.000";
+			inet_ntop(sock_addr_info.sin_family, (const void*)&sock_addr_info.sin_addr, address_name, UINT16_WIDTH);
+			printf("%.*s", UINT16_WIDTH, address_name);
+			printf(" : ");
 			char* cursor = buffer;
 			for(int i=0;i<bytes_recv;i++)
 			{

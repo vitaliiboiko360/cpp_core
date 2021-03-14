@@ -79,7 +79,7 @@ int main (void)
 	
 	//Data part
 	data = datagram + sizeof(struct iphdr) + sizeof(struct udphdr);
-	strcpy(data , "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	strcpy(data , "ABCDEFGHIJKLMNOPQRSTUVWXYZZZZZZZZZZZZZZZZZZZZZZZ");
 	
 	//some address resolution
 	strcpy(source_ip , "192.168.129.132");
@@ -125,6 +125,7 @@ int main (void)
 	
 	udph->check = csum( (unsigned short*) pseudogram , psize);
 	
+	int64_t counter = 0;
 	while (1)
 	{
 		//Send the packet
@@ -135,7 +136,7 @@ int main (void)
 		//Data send successfully
 		else
 		{
-			printf ("Packet Send. Length : %d \n" , iph->tot_len);
+			printf("Packet Send. Length : %d. Number #%ld\n" , iph->tot_len, counter++);
 		}
         sleep(5);
 	}
