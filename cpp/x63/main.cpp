@@ -134,7 +134,7 @@ int main (void)
 		char buffer[UINT16_MAX];
 		memset(buffer, 0, UINT16_MAX);
 		int bytes_recv;
-		printf("before call to recvfrom\n");
+		//printf("before call to recvfrom\n");
 		//bytes_recv = recvfrom (s, buffer, UINT16_MAX, 0, (struct sockaddr *) &sin, (socklen_t*)sizeof (sin));
 		bytes_recv = recvfrom (s, buffer, UINT16_MAX, 0, (struct sockaddr*)&sock_addr_info, &sock_size);
 		//Recv the packet
