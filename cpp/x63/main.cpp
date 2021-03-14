@@ -128,6 +128,7 @@ int main (void)
 	while (1)
 	{
 		char buffer[UINT16_MAX];
+		memset(buffer, 0, UINT16_MAX);
 		int bytes_recv;
 		printf("before call to recvfrom\n");
 		//bytes_recv = recvfrom (s, buffer, UINT16_MAX, 0, (struct sockaddr *) &sin, (socklen_t*)sizeof (sin));
@@ -140,7 +141,14 @@ int main (void)
 		//Data recv successfully
 		else
 		{
-			printf ("Packet Received. : %.*s \n" , bytes_recv, buffer);
+			printf ("Packet Received. : ");
+			char* cursor = buffer;
+			for(int i=0;i<bytes_recv;i++)
+			{
+				printf("%c", *cursor);
+				cursor++;
+			}
+			printf("\n");
 		}
 	}
 	
