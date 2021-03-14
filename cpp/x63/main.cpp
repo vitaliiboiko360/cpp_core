@@ -129,8 +129,9 @@ int main (void)
 	{
 		char buffer[UINT16_MAX];
 		int bytes_recv;
-		printf("about to recvfrom\n");
-		bytes_recv = recvfrom (s, buffer, UINT16_MAX, 0, (struct sockaddr *) &sin, (socklen_t*)sizeof (sin));
+		printf("before call to recvfrom\n");
+		//bytes_recv = recvfrom (s, buffer, UINT16_MAX, 0, (struct sockaddr *) &sin, (socklen_t*)sizeof (sin));
+		bytes_recv = recvfrom (s, buffer, UINT16_MAX, 0, NULL, NULL);
 		//Recv the packet
 		if (bytes_recv == -1)
 		{
