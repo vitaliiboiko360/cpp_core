@@ -79,7 +79,7 @@ int main (void)
 	
 	//Data part
 	data = datagram + sizeof(struct iphdr) + sizeof(struct udphdr);
-	strcpy(data , "ABCDEFGHIJKLMNOPQRSTUVWXYZZZZZZZZZZZZZZZZZZZZZZZ");
+	strcpy(data , "ABCDEFGHIJKLMNOPQRSTUVWXYZZZZZZZZZZZZZZZZZZZZZZZEND");
 	
 	//some address resolution
 	strcpy(source_ip , "192.168.129.132");
