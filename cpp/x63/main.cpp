@@ -162,13 +162,14 @@ int main (void)
 			printf("\nidentification: %d ", ntohs(ip_head->id));
 			printf("\ntime to live: %d ", ntohs(ip_head->ttl));
 			printf("\nprotocol: %d ", (unsigned int)ip_head->protocol);
-			printf("\nheader checksum: %d ", ntohs(ip_head->check));
-			printf("\nUPD header consists : ");
+			printf("\nheader checksum: %x ", ntohs(ip_head->check));
+			printf("\nUDP header consists : ");
 			printf("\nsource port: %hd ", ntohs(udp_head->source));
 			printf("\ndestination port: %hd ", ntohs(udp_head->dest));
 			printf("\nupd header length: %hd ", ntohs(udp_head->len));
-			printf("\nchecksum: %hd ", ntohs(udp_head->check));
+			printf("\nchecksum: %x ", ntohs(udp_head->check));
 
+			printf("\npayload: ");
 			int header_length = sizeof(struct ip) + sizeof(struct udphdr);
 			char* cursor = buffer + header_length;
 			int payload_length = bytes_recv - header_length; 
