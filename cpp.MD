@@ -1,3 +1,5 @@
+
+
 #### transform()
 ```cpp
 int square(int elem)
@@ -16,6 +18,13 @@ void square(int& elem)
 }
 ...
 for_each(coll.begin(), coll.end(), square);
+```
+cpp```
+vector<int> coll= {1, 3, 9, 5, 8, 4, 7, 2, 6};
+for_each(coll.cbegin(), coll.cend(), [](int elem) {
+cout << elem << " ";
+});
+cout << endl;
 ```
 
 #### static
