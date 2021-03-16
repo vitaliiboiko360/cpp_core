@@ -2,10 +2,12 @@
 #include <cstring>
 #include <cstdlib>
 
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/udp.h>
+#include <arpa/inet.h>
 
 const int _4KB = 4096;
 
@@ -59,9 +61,12 @@ int srv_main()
     memset(datagram, 0, _4KB);
 
     struct iphdr *p_ip_header = (struct iphdr *) datagram;
-    struct udphdr *p_udp_header = (struct udphdr *)(datagram + sizeof(struct ip));
+    //struct udphdr *p_udp_header = (struct udphdr *)(datagram + sizeof(struct ip));
 
     struct sockaddr_in inet_sock_addr;
+    inet_sock_addr.sin_family = AF_INET;
+	inet_sock_addr.sin_port = htons(8888);
+	inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.129.132");
 
     // write payload
     char* payload = datagram + sizeof(struct iphdr) + sizeof(struct udphdr);
@@ -82,6 +87,22 @@ int srv_main()
 
     p_ip_header->check = csum((unsigned short *) datagram, p_ip_header->tot_len);
 
+    int64_t counter = 0;
+    int16_t bytes_sent = 0;
+	while (1)
+	{
+		// send the packet
+        bytes_sent = sendto(socket_descriptor, datagram, p_ip_header->tot_len,0, (struct sockaddr *)&inet_sock_addr, sizeof(inet_sock_addr));
+		if(bytes_sent < 0)
+		{
+			perror("sendto failed");
+		}
+		else
+		{
+			printf("#%ld packet sent. length %d\n",++counter, p_ip_header->tot_len);
+        }
+        sleep(5);
+	}
 
     return 0;
 }
