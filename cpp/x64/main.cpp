@@ -63,8 +63,8 @@ void get_ip_addresses()
 
     getifaddrs(&if_address_list);
 
-    for (struct ifaddrs *ifa = if_address_list; ifa != NULL;
-            ifa = ifa->ifa_next) {
+    for (struct ifaddrs *ifa = if_address_list; ifa != NULL; ifa = ifa->ifa_next) 
+    {
         if (ifa->ifa_addr == NULL)
             continue;
 
@@ -82,20 +82,24 @@ void get_ip_addresses()
 
         /* For an AF_INET* interface address, display the address */
 
-        if (family == AF_INET || family == AF_INET6) {
-            s = getnameinfo(ifa->ifa_addr,
-                    (family == AF_INET) ? sizeof(struct sockaddr_in) :
-                                            sizeof(struct sockaddr_in6),
-                    host, NI_MAXHOST,
-                    NULL, 0, NI_NUMERICHOST);
-            if (s != 0) {
+        if (family == AF_INET || family == AF_INET6) 
+        {
+            s = getnameinfo(
+                ifa->ifa_addr,
+                (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
+                host, 
+                NI_MAXHOST,
+                NULL, 0, NI_NUMERICHOST);
+
+            if (s != 0) 
+            {
                 printf("getnameinfo() failed: %s\n", gai_strerror(s));
-                exit(EXIT_FAILURE);
+                return;
             }
-
             printf("\t\taddress: <%s>\n", host);
-
-        } else if (family == AF_PACKET && ifa->ifa_data != NULL) {
+        } 
+        else if (family == AF_PACKET && ifa->ifa_data != NULL) 
+        {
             struct rtnl_link_stats *stats = (struct rtnl_link_stats *)ifa->ifa_data;
 
             printf("\t\ttx_packets = %10u; rx_packets = %10u\n"
