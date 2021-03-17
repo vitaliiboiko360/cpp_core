@@ -8,6 +8,7 @@
 #include <netinet/ip.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>
+#include <ifaddrs.h>
 
 const int _4KB = 4096;
 
@@ -50,6 +51,11 @@ void if_true_error_terminate(bool check, const char* msg)
         perror(msg);
         exit(1);
     }
+}
+
+void get_ip_addresses()
+{
+    getifaddrs();
 }
 
 int srv_main()
@@ -106,8 +112,66 @@ int srv_main()
 
     return 0;
 }
+
 int cli_main()
 {
+    int socket_descriptor = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
+    if_true_error_terminate(-1 == socket_descriptor, "socket");
+
+    struct sockaddr_in inet_sock_addr;
+	socklen_t sock_size = sizeof(struct sockaddr_in);
+	while (1)
+	{
+		memset(&inet_sock_addr, 0, sock_size);
+
+		char buffer[UINT16_MAX];
+		memset(buffer, 0, UINT16_MAX);
+		int bytes_recv;
+
+		bytes_recv = recvfrom (socket_descriptor, buffer, UINT16_MAX, 0, (struct sockaddr*)&inet_sock_addr, &sock_size);
+
+		if (bytes_recv == -1)
+		{
+			perror("recvfrom failed");
+		}
+		else
+		{
+			
+			printf("Packet Received from ");
+			char address_name[UINT16_WIDTH] = "000.000.000.000";
+			inet_ntop(inet_sock_addr.sin_family, (const void*)&inet_sock_addr.sin_addr, address_name, UINT16_WIDTH);
+			printf("%.*s", UINT16_WIDTH, address_name);
+			printf(" : ");
+
+			printf(" IP header consists : ");
+			struct iphdr *ip_head = (struct iphdr *)buffer;
+			struct udphdr *udp_head = (struct udphdr *) (buffer + sizeof (struct ip));
+			printf("\nversion: %d ", (unsigned int)ip_head->version);
+			printf("\ninternet header length: %d or %d bytes ", (unsigned int)ip_head->ihl, (unsigned int)ip_head->ihl*4);
+			printf("\ntype of service: %d ", (unsigned int)ip_head->tos);
+			printf("\ntotal length: %d bytes ", ntohs(ip_head->tot_len));
+			printf("\nidentification: %d ", ntohs(ip_head->id));
+			printf("\ntime to live: %d ", ntohs(ip_head->ttl));
+			printf("\nprotocol: %d ", (unsigned int)ip_head->protocol);
+			printf("\nheader checksum: %x ", ntohs(ip_head->check));
+			printf("\nUDP header consists : ");
+			printf("\nsource port: %hd ", ntohs(udp_head->source));
+			printf("\ndestination port: %hd ", ntohs(udp_head->dest));
+			printf("\nupd header length: %hd ", ntohs(udp_head->len));
+			printf("\nchecksum: %x ", ntohs(udp_head->check));
+
+			printf("\npayload: ");
+			int header_length = sizeof(struct ip) + sizeof(struct udphdr);
+			char* cursor = buffer + header_length;
+			int payload_length = bytes_recv - header_length; 
+			for(int i=0;i<payload_length;i++)
+			{
+				printf("%c", *cursor);
+				cursor++;
+			}
+			printf("\n");
+		}
+	}
 
     return 0;
 }
