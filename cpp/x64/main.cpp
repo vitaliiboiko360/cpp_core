@@ -9,6 +9,8 @@
 #include <netinet/udp.h>
 #include <arpa/inet.h>
 #include <ifaddrs.h>
+#include <netdb.h>
+#include <linux/if_link.h>
 
 const int _4KB = 4096;
 
@@ -55,11 +57,61 @@ void if_true_error_terminate(bool check, const char* msg)
 
 void get_ip_addresses()
 {
-    getifaddrs();
+    struct ifaddrs* if_address_list;
+    int family, s;
+    char host[NI_MAXHOST];
+
+    getifaddrs(&if_address_list);
+
+    for (struct ifaddrs *ifa = if_address_list; ifa != NULL;
+            ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == NULL)
+            continue;
+
+        family = ifa->ifa_addr->sa_family;
+
+        /* Display interface name and family (including symbolic
+            form of the latter for the common families) */
+
+        printf("%-8s %s (%d)\n",
+                ifa->ifa_name,
+                (family == AF_PACKET) ? "AF_PACKET" :
+                (family == AF_INET) ? "AF_INET" :
+                (family == AF_INET6) ? "AF_INET6" : "???",
+                family);
+
+        /* For an AF_INET* interface address, display the address */
+
+        if (family == AF_INET || family == AF_INET6) {
+            s = getnameinfo(ifa->ifa_addr,
+                    (family == AF_INET) ? sizeof(struct sockaddr_in) :
+                                            sizeof(struct sockaddr_in6),
+                    host, NI_MAXHOST,
+                    NULL, 0, NI_NUMERICHOST);
+            if (s != 0) {
+                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                exit(EXIT_FAILURE);
+            }
+
+            printf("\t\taddress: <%s>\n", host);
+
+        } else if (family == AF_PACKET && ifa->ifa_data != NULL) {
+            struct rtnl_link_stats *stats = (struct rtnl_link_stats *)ifa->ifa_data;
+
+            printf("\t\ttx_packets = %10u; rx_packets = %10u\n"
+                    "\t\ttx_bytes   = %10u; rx_bytes   = %10u\n",
+                    stats->tx_packets, stats->rx_packets,
+                    stats->tx_bytes, stats->rx_bytes);
+        }
+    }
+
+    freeifaddrs(if_address_list);
 }
 
 int srv_main()
 {
+    get_ip_addresses();
+
     int socket_descriptor = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     if_true_error_terminate(-1 == socket_descriptor, "socket");
 
