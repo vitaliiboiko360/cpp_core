@@ -129,6 +129,7 @@ int srv_main()
     inet_sock_addr.sin_family = AF_INET;
 	inet_sock_addr.sin_port = htons(8888);
 	inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.129.132");
+	// inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.255.255");
 
     // write payload
     char* payload = datagram + sizeof(struct iphdr) + sizeof(struct udphdr);
@@ -139,7 +140,8 @@ int srv_main()
 	p_ip_header->version = 4;
 	p_ip_header->tos = 0;
 	p_ip_header->tot_len = sizeof(struct iphdr) + sizeof(struct udphdr) + strlen(payload);
-	p_ip_header->id = htonl(54321);	// Id of this packet
+	// p_ip_header->id = htonl(54321);	// Id of this packet
+	p_ip_header->id = 0;	// Id of this packet
 	p_ip_header->frag_off = 0;
 	p_ip_header->ttl = 255;
 	p_ip_header->protocol = IPPROTO_RAW;
