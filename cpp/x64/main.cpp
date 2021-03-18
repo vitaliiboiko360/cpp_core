@@ -129,7 +129,7 @@ int srv_main()
     inet_sock_addr.sin_family = AF_INET;
 	inet_sock_addr.sin_port = htons(8888);
 	inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.129.132");
-	// inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.255.255");
+	// inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.129.255");
 
     // write payload
     char* payload = datagram + sizeof(struct iphdr) + sizeof(struct udphdr);
@@ -198,37 +198,50 @@ int cli_main()
 			printf("Packet Received from ");
 			char address_name[UINT16_WIDTH] = "000.000.000.000";
 			inet_ntop(inet_sock_addr.sin_family, (const void*)&inet_sock_addr.sin_addr, address_name, UINT16_WIDTH);
-			printf("%.*s", UINT16_WIDTH, address_name);
-			printf(" : ");
+			printf("%.*s\n", UINT16_WIDTH, address_name);
+			
+            // printf(" : ");
+			// printf(" IP header consists : ");
+			// struct iphdr *ip_head = (struct iphdr *)buffer;
+			// struct udphdr *udp_head = (struct udphdr *) (buffer + sizeof (struct ip));
+			// printf("\nversion: %d ", (unsigned int)ip_head->version);
+			// printf("\ninternet header length: %d or %d bytes ", (unsigned int)ip_head->ihl, (unsigned int)ip_head->ihl*4);
+			// printf("\ntype of service: %d ", (unsigned int)ip_head->tos);
+			// printf("\ntotal length: %d bytes ", ntohs(ip_head->tot_len));
+			// printf("\nidentification: %d ", ntohs(ip_head->id));
+			// printf("\ntime to live: %d ", ntohs(ip_head->ttl));
+			// printf("\nprotocol: %d ", (unsigned int)ip_head->protocol);
+			// printf("\nheader checksum: %x ", ntohs(ip_head->check));
+			// printf("\nUDP header consists : ");
+			// printf("\nsource port: %hd ", ntohs(udp_head->source));
+			// printf("\ndestination port: %hd ", ntohs(udp_head->dest));
+			// printf("\nupd header length: %hd ", ntohs(udp_head->len));
+			// printf("\nchecksum: %x ", ntohs(udp_head->check));
 
-			printf(" IP header consists : ");
-			struct iphdr *ip_head = (struct iphdr *)buffer;
-			struct udphdr *udp_head = (struct udphdr *) (buffer + sizeof (struct ip));
-			printf("\nversion: %d ", (unsigned int)ip_head->version);
-			printf("\ninternet header length: %d or %d bytes ", (unsigned int)ip_head->ihl, (unsigned int)ip_head->ihl*4);
-			printf("\ntype of service: %d ", (unsigned int)ip_head->tos);
-			printf("\ntotal length: %d bytes ", ntohs(ip_head->tot_len));
-			printf("\nidentification: %d ", ntohs(ip_head->id));
-			printf("\ntime to live: %d ", ntohs(ip_head->ttl));
-			printf("\nprotocol: %d ", (unsigned int)ip_head->protocol);
-			printf("\nheader checksum: %x ", ntohs(ip_head->check));
-			printf("\nUDP header consists : ");
-			printf("\nsource port: %hd ", ntohs(udp_head->source));
-			printf("\ndestination port: %hd ", ntohs(udp_head->dest));
-			printf("\nupd header length: %hd ", ntohs(udp_head->len));
-			printf("\nchecksum: %x ", ntohs(udp_head->check));
-
-			printf("\npayload: ");
-			int header_length = sizeof(struct ip) + sizeof(struct udphdr);
-			char* cursor = buffer + header_length;
-			int payload_length = bytes_recv - header_length; 
-			for(int i=0;i<payload_length;i++)
-			{
-				printf("%c", *cursor);
-				cursor++;
-			}
-			printf("\n");
+			// printf("\npayload: ");
+			// int header_length = sizeof(struct ip) + sizeof(struct udphdr);
+			// char* cursor = buffer + header_length;
+			// int payload_length = bytes_recv - header_length; 
+			// for(int i=0;i<payload_length;i++)
+			// {
+			// 	printf("%c", *cursor);
+			// 	cursor++;
+			// }
+			// printf("\n");
 		}
+        
+        int64_t counter = 0;
+        int16_t bytes_sent = 0;
+
+        bytes_sent = sendto(socket_descriptor, datagram, p_ip_header->tot_len,0, (struct sockaddr *)&inet_sock_addr, sizeof(inet_sock_addr));
+		if(bytes_sent < 0)
+		{
+			perror("sendto failed");
+		}
+		else
+		{
+			printf("#%ld packet sent. length %d\n",++counter, p_ip_header->tot_len);
+        }
 	}
 
     return 0;
