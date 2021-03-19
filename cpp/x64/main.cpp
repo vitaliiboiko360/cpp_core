@@ -112,34 +112,54 @@ void get_ip_addresses()
     freeifaddrs(if_address_list);
 }
 
-int srv_main()
+void print_sender_ip_address(struct sockaddr_in* inet_sock_addr)
 {
-    get_ip_addresses();
+        printf("packet received from ");
+        char address_name[UINT16_WIDTH] = "000.000.000.000";
+        inet_ntop(inet_sock_addr->sin_family, (const void*)&inet_sock_addr->sin_addr, address_name, UINT16_WIDTH);
+        printf("%.*s\n", UINT16_WIDTH, address_name);
+}
 
-    int socket_descriptor = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
-    if_true_error_terminate(-1 == socket_descriptor, "socket");
+void print_ip_and_upd_header_fields(void* buffer)
+{
+    printf("IP header consists : ");
+    struct iphdr *ip_head = (struct iphdr *)buffer;
+    struct udphdr *udp_head = (struct udphdr *) (buffer + sizeof (struct ip));
+    printf("\tversion: %d ", (unsigned int)ip_head->version);
+    printf("\tinternet header length: %d or %d bytes ", (unsigned int)ip_head->ihl, (unsigned int)ip_head->ihl*4);
+    printf("\ttype of service: %d ", (unsigned int)ip_head->tos);
+    printf("\ttotal length: %d bytes ", ntohs(ip_head->tot_len));
+    printf("\tidentification: %d ", ntohs(ip_head->id));
+    printf("\ttime to live: %d ", ntohs(ip_head->ttl));
+    printf("\tprotocol: %d ", (unsigned int)ip_head->protocol);
+    printf("\theader checksum: %x ", ntohs(ip_head->check));
+    printf("\tUDP header consists : ");
+    printf("\tsource port: %hd ", ntohs(udp_head->source));
+    printf("\tdestination port: %hd ", ntohs(udp_head->dest));
+    printf("\tupd header length: %hd ", ntohs(udp_head->len));
+    printf("\tchecksum: %x \n", ntohs(udp_head->check));
+}
 
-    char datagram[_4KB];
-    memset(datagram, 0, _4KB);
+void print_payload(void* buffer, size_t bytes_recived)
+{
+    printf("payload: ");
+    int header_length = sizeof(struct ip) + sizeof(struct udphdr);
+    char* cursor = (char*)buffer + header_length;
+    int payload_length = bytes_recived - header_length; 
+    for(int i=0;i<payload_length;i++)
+    {
+    	printf("%c", *cursor);
+    	cursor++;
+    }
+    printf("\n");
+}
 
-    struct iphdr *p_ip_header = (struct iphdr *) datagram;
-    //struct udphdr *p_udp_header = (struct udphdr *)(datagram + sizeof(struct ip));
-
-    struct sockaddr_in inet_sock_addr;
-    inet_sock_addr.sin_family = AF_INET;
-	inet_sock_addr.sin_port = htons(8888);
-	inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.129.132");
-	// inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.129.255");
-
-    // write payload
-    char* payload = datagram + sizeof(struct iphdr) + sizeof(struct udphdr);
-    strcpy(payload, "PING");
-
-    // fill in the IP header
-	p_ip_header->ihl = 5;
+void fill_ip_header(struct iphdr *p_ip_header, int payload_length)
+{
+    p_ip_header->ihl = 5;
 	p_ip_header->version = 4;
 	p_ip_header->tos = 0;
-	p_ip_header->tot_len = sizeof(struct iphdr) + sizeof(struct udphdr) + strlen(payload);
+	p_ip_header->tot_len = sizeof(struct iphdr) + sizeof(struct udphdr) + payload_length;
 	// p_ip_header->id = htonl(54321);	// Id of this packet
 	p_ip_header->id = 0;	// Id of this packet
 	p_ip_header->frag_off = 0;
@@ -149,7 +169,34 @@ int srv_main()
     p_ip_header->saddr = 0; // no source ip address
     p_ip_header->daddr = 0; // no dest ip address
 
-    p_ip_header->check = csum((unsigned short *) datagram, p_ip_header->tot_len);
+    p_ip_header->check = csum((unsigned short *) p_ip_header, p_ip_header->tot_len);
+}
+
+int srv_main()
+{
+    get_ip_addresses();
+
+    int socket_descriptor = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
+    if_true_error_terminate(-1 == socket_descriptor, "socket");
+
+    //struct udphdr *p_udp_header = (struct udphdr *)(datagram + sizeof(struct ip));
+
+    struct sockaddr_in inet_sock_addr;
+    inet_sock_addr.sin_family = AF_INET;
+	inet_sock_addr.sin_port = htons(8888);
+	inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.129.132");
+
+
+    char datagram[_4KB];
+    memset(datagram, 0, _4KB);
+    struct iphdr *p_ip_header = (struct iphdr *) datagram;
+
+    // write payload
+    char* payload = datagram + sizeof(struct iphdr) + sizeof(struct udphdr);
+    strcpy(payload, "PING");
+
+    // fill ip header
+    fill_ip_header(p_ip_header, strlen(payload));
 
     int64_t counter = 0;
     int16_t bytes_sent = 0;
@@ -191,43 +238,6 @@ int cli_main()
 		if (bytes_recv == -1)
 		{
 			perror("recvfrom failed");
-		}
-		else
-		{
-			
-			printf("Packet Received from ");
-			char address_name[UINT16_WIDTH] = "000.000.000.000";
-			inet_ntop(inet_sock_addr.sin_family, (const void*)&inet_sock_addr.sin_addr, address_name, UINT16_WIDTH);
-			printf("%.*s\n", UINT16_WIDTH, address_name);
-			
-            // printf(" : ");
-			// printf(" IP header consists : ");
-			// struct iphdr *ip_head = (struct iphdr *)buffer;
-			// struct udphdr *udp_head = (struct udphdr *) (buffer + sizeof (struct ip));
-			// printf("\nversion: %d ", (unsigned int)ip_head->version);
-			// printf("\ninternet header length: %d or %d bytes ", (unsigned int)ip_head->ihl, (unsigned int)ip_head->ihl*4);
-			// printf("\ntype of service: %d ", (unsigned int)ip_head->tos);
-			// printf("\ntotal length: %d bytes ", ntohs(ip_head->tot_len));
-			// printf("\nidentification: %d ", ntohs(ip_head->id));
-			// printf("\ntime to live: %d ", ntohs(ip_head->ttl));
-			// printf("\nprotocol: %d ", (unsigned int)ip_head->protocol);
-			// printf("\nheader checksum: %x ", ntohs(ip_head->check));
-			// printf("\nUDP header consists : ");
-			// printf("\nsource port: %hd ", ntohs(udp_head->source));
-			// printf("\ndestination port: %hd ", ntohs(udp_head->dest));
-			// printf("\nupd header length: %hd ", ntohs(udp_head->len));
-			// printf("\nchecksum: %x ", ntohs(udp_head->check));
-
-			// printf("\npayload: ");
-			// int header_length = sizeof(struct ip) + sizeof(struct udphdr);
-			// char* cursor = buffer + header_length;
-			// int payload_length = bytes_recv - header_length; 
-			// for(int i=0;i<payload_length;i++)
-			// {
-			// 	printf("%c", *cursor);
-			// 	cursor++;
-			// }
-			// printf("\n");
 		}
         
         int64_t counter = 0;
