@@ -55,7 +55,7 @@ void if_true_error_terminate(bool check, const char* msg)
     }
 }
 
-void get_ip_addresses()
+void print_ip_addresses()
 {
     struct ifaddrs* if_address_list;
     int family, s;
@@ -124,7 +124,7 @@ void print_ip_and_upd_header_fields(void* buffer)
 {
     printf("IP header consists : ");
     struct iphdr *ip_head = (struct iphdr *)buffer;
-    struct udphdr *udp_head = (struct udphdr *) (buffer + sizeof (struct ip));
+    struct udphdr *udp_head = (struct udphdr *) ((char*)buffer + sizeof (struct ip));
     printf("\tversion: %d ", (unsigned int)ip_head->version);
     printf("\tinternet header length: %d or %d bytes ", (unsigned int)ip_head->ihl, (unsigned int)ip_head->ihl*4);
     printf("\ttype of service: %d ", (unsigned int)ip_head->tos);
@@ -140,9 +140,9 @@ void print_ip_and_upd_header_fields(void* buffer)
     printf("\tchecksum: %x \n", ntohs(udp_head->check));
 }
 
-void print_payload(void* buffer, size_t bytes_recived)
+void print_payload(const char* message, void* buffer, size_t bytes_recived)
 {
-    printf("payload: ");
+    printf("%s: ", message);
     int header_length = sizeof(struct ip) + sizeof(struct udphdr);
     char* cursor = (char*)buffer + header_length;
     int payload_length = bytes_recived - header_length; 
@@ -174,7 +174,7 @@ void fill_ip_header(struct iphdr *p_ip_header, int payload_length)
 
 int srv_main()
 {
-    get_ip_addresses();
+    print_ip_addresses();
 
     int socket_descriptor = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     if_true_error_terminate(-1 == socket_descriptor, "socket");
@@ -185,7 +185,6 @@ int srv_main()
     inet_sock_addr.sin_family = AF_INET;
 	inet_sock_addr.sin_port = htons(8888);
 	inet_sock_addr.sin_addr.s_addr = inet_addr("192.168.129.132");
-
 
     char datagram[_4KB];
     memset(datagram, 0, _4KB);
@@ -212,7 +211,28 @@ int srv_main()
 		{
 			printf("#%ld packet sent. length %d\n",++counter, p_ip_header->tot_len);
         }
-        sleep(5);
+
+        //sleep(5);
+
+        // recive the packet
+        struct sockaddr_in inet_sock_addr;
+	    socklen_t sock_size = sizeof(struct sockaddr_in);
+        memset(&inet_sock_addr, 0, sock_size);
+
+		char buffer[UINT16_MAX];
+		memset(buffer, 0, UINT16_MAX);
+
+		int bytes_recv;
+		bytes_recv = recvfrom (socket_descriptor, buffer, UINT16_MAX, 0, (struct sockaddr*)&inet_sock_addr, &sock_size);
+
+		if (bytes_recv == -1)
+		{
+			perror("recvfrom failed");
+		}
+        else
+        {
+            print_payload("srv received", buffer, bytes_recv);
+        }
 	}
 
     return 0;
@@ -222,6 +242,14 @@ int cli_main()
 {
     int socket_descriptor = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
     if_true_error_terminate(-1 == socket_descriptor, "socket");
+
+
+    struct sockaddr_in inet_sock_addr_sendto;
+    inet_sock_addr_sendto.sin_family = AF_INET;
+    inet_sock_addr_sendto.sin_port = htons(8888);
+    inet_sock_addr_sendto.sin_addr.s_addr = inet_addr("192.168.129.132");
+
+    int64_t counter = 0;
 
     struct sockaddr_in inet_sock_addr;
 	socklen_t sock_size = sizeof(struct sockaddr_in);
@@ -239,11 +267,28 @@ int cli_main()
 		{
 			perror("recvfrom failed");
 		}
+        else
+        {
+            print_payload("cli received", buffer, bytes_recv);
+        }
+
+        //sleep(2);
+
+        char datagram[_4KB];
+        memset(datagram, 0, _4KB);
+        struct iphdr *p_ip_header = (struct iphdr *) datagram;
+
+        // write payload
+        char* payload = datagram + sizeof(struct iphdr) + sizeof(struct udphdr);
+        strcpy(payload, "PONG");
+
+        // fill ip header
+        fill_ip_header(p_ip_header, strlen(payload));
         
-        int64_t counter = 0;
+ 
         int16_t bytes_sent = 0;
 
-        bytes_sent = sendto(socket_descriptor, datagram, p_ip_header->tot_len,0, (struct sockaddr *)&inet_sock_addr, sizeof(inet_sock_addr));
+        bytes_sent = sendto(socket_descriptor, datagram, p_ip_header->tot_len,0, (struct sockaddr *)&inet_sock_addr_sendto, sizeof(inet_sock_addr_sendto));
 		if(bytes_sent < 0)
 		{
 			perror("sendto failed");
@@ -252,6 +297,7 @@ int cli_main()
 		{
 			printf("#%ld packet sent. length %d\n",++counter, p_ip_header->tot_len);
         }
+        
 	}
 
     return 0;
