@@ -154,7 +154,7 @@ void print_payload(const char* message, void* buffer, size_t bytes_recived)
     printf("\n");
 }
 
-void fill_ip_header(struct iphdr *p_ip_header, int payload_length)
+void fill_ip_udp_headers(struct iphdr *p_ip_header, int payload_length)
 {
     p_ip_header->ihl = 5;
 	p_ip_header->version = 4;
@@ -195,7 +195,7 @@ int srv_main()
     strcpy(payload, "PING");
 
     // fill ip header
-    fill_ip_header(p_ip_header, strlen(payload));
+    fill_ip_udp_headers(p_ip_header, strlen(payload));
 
     int64_t counter = 0;
     int16_t bytes_sent = 0;
@@ -283,7 +283,7 @@ int cli_main()
         strcpy(payload, "PONG");
 
         // fill ip header
-        fill_ip_header(p_ip_header, strlen(payload));
+        fill_ip_udp_headers(p_ip_header, strlen(payload));
         
  
         int16_t bytes_sent = 0;
