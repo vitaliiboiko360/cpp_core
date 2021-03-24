@@ -11,7 +11,8 @@
 
     function connectWebSocket(){
       var srvConnectionString = "ws://" + window.location.hostname + ':' + `${parseInt(window.location.port)}`;
-      webSocket = new WebSocket("ws://localhost:3000");
+      //webSocket = new WebSocket("ws://localhost:3000");
+      webSocket = new WebSocket(srvConnectionString);
       webSocket.onmessage = function(event) {
         paragraph.innerHTML = event.data
       }

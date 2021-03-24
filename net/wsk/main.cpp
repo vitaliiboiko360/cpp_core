@@ -119,14 +119,22 @@ int main()
         std::string msg{R"(<svg width="100" height="100">
                         <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="{COLOR}" />
                         </svg>)"};
+
+        std::string square{R"_(<svg width="400" height="100">
+                        <rect width="400" height="100" style="fill:{COLOR};stroke-width:10;stroke:rgb(0,0,0)" />
+                        </svg>)_"};
+
         std::string msg_out;  
         int i = std::rand() % 3;
+
+
+
         std::cout<<"passed to switch i="<<i<<std::endl;             
         switch(i)
         {
             case 0: msg_out = replace(msg, "{COLOR}", "red");
                     break;
-            case 1: msg_out = replace(msg, "{COLOR}", "green");;
+            case 1: msg_out = replace(square, "{COLOR}", "green");;
                     break;
             default: msg_out = replace(msg, "{COLOR}", "yellow");;
         }
