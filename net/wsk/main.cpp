@@ -1,12 +1,16 @@
-#include "../../../uWebSockets/src/App.h"
-#include "../../../uWebSockets/src/HttpParser.h"
-#include "helpers/Middleware.h"
-#include "helpers/AsyncFileStreamer.h"
+
 #include <atomic>
 #include <vector>
 #include <iostream>
 #include <string>
 #include <regex>
+
+#include "../../../uWebSockets/src/App.h"
+#include "../../../uWebSockets/src/HttpParser.h"
+#include "helpers/Middleware.h"
+#include "helpers/AsyncFileStreamer.h"
+
+#include "drawing.h"
 
 const bool SSL{false};
 std::atomic<int> g_id_counter{ 1 };
@@ -113,6 +117,8 @@ int main()
 
         app.run();
     }};
+
+    drawing drawing_1;
     
     while(true)
     {
@@ -136,7 +142,7 @@ int main()
                     break;
             case 1: msg_out = replace(square, "{COLOR}", "green");;
                     break;
-            default: msg_out = replace(msg, "{COLOR}", "yellow");;
+            default: msg_out = drawing_1.get_drawing();
         }
         
         std::cout<<"websocket.size()= "<<websockets.size()<<std::endl;

@@ -21,6 +21,7 @@ add_executable(app main.cpp)
 
 target_include_directories(app PUBLIC
 "/home/user1/uWebSocket/src"
+"."
 )
 
 target_link_libraries(app PUBLIC
