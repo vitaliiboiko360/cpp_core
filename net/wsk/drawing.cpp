@@ -4,7 +4,6 @@
 #include <streambuf>
 
 #include "drawing.h"
-#include "drawing.svg"
 
 drawing::drawing()
 {

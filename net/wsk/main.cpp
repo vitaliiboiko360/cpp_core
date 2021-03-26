@@ -119,47 +119,49 @@ int main()
     }};
 
     drawing drawing_1;
+    std::cout<<drawing_1.get_drawing()<<std::endl;
+
     
-    while(true)
-    {
-        std::string msg{R"(<svg width="100" height="100">
-                        <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="{COLOR}" />
-                        </svg>)"};
+    // while(true)
+    // {
+    //     std::string msg{R"(<svg width="100" height="100">
+    //                     <circle cx="50" cy="50" r="40" stroke="black" stroke-width="4" fill="{COLOR}" />
+    //                     </svg>)"};
 
-        std::string square{R"_(<svg width="400" height="100">
-                        <rect width="400" height="100" style="fill:{COLOR};stroke-width:10;stroke:rgb(0,0,0)" />
-                        </svg>)_"};
+    //     std::string square{R"_(<svg width="400" height="100">
+    //                     <rect width="400" height="100" style="fill:{COLOR};stroke-width:10;stroke:rgb(0,0,0)" />
+    //                     </svg>)_"};
 
-        std::string msg_out;  
-        int i = std::rand() % 3;
+    //     std::string msg_out;  
+    //     int i = std::rand() % 3;
 
 
 
-        std::cout<<"passed to switch i="<<i<<std::endl;             
-        switch(i)
-        {
-            case 0: msg_out = replace(msg, "{COLOR}", "red");
-                    break;
-            case 1: msg_out = replace(square, "{COLOR}", "green");;
-                    break;
-            default: msg_out = drawing_1.get_drawing();
-        }
+    //     std::cout<<"passed to switch i="<<i<<std::endl;             
+    //     switch(i)
+    //     {
+    //         case 0: msg_out = replace(msg, "{COLOR}", "red");
+    //                 break;
+    //         case 1: msg_out = replace(square, "{COLOR}", "green");;
+    //                 break;
+    //         default: msg_out = drawing_1.get_drawing();
+    //     }
         
-        std::cout<<"websocket.size()= "<<websockets.size()<<std::endl;
-        for(auto w : websockets)
-        {
-            if(get_websocket_state(w))
-            {
-                w->send(msg_out, uWS::OpCode::TEXT);
-                std::cout<<"sent to ws: "<<get_websocket_id(w)<<std::endl;
-            }
-        }
+    //     std::cout<<"websocket.size()= "<<websockets.size()<<std::endl;
+    //     for(auto w : websockets)
+    //     {
+    //         if(get_websocket_state(w))
+    //         {
+    //             w->send(msg_out, uWS::OpCode::TEXT);
+    //             std::cout<<"sent to ws: "<<get_websocket_id(w)<<std::endl;
+    //         }
+    //     }
         
-        //send(msg, uWS::OpCode::TEXT);
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-    }
+    //     //send(msg, uWS::OpCode::TEXT);
+    //     std::this_thread::sleep_for(std::chrono::seconds(5));
+    // }
 
-    std::cout<<"after t1 created\n";
+    // std::cout<<"after t1 created\n";
     
     t1.join();
     return 0;
