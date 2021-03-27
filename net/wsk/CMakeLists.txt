@@ -17,7 +17,7 @@ set(USOCKETS_OBJS
 "/home/user1/uSockets/openssl.o"
 )
 
-add_executable(app main.cpp drawing.cpp)
+add_executable(app main.cpp svg_drawing.cpp)
 
 target_include_directories(app PUBLIC
 "/home/user1/uWebSocket/src"
