@@ -22,6 +22,7 @@ add_executable(app main.cpp svg_drawing.cpp)
 target_include_directories(app PUBLIC
 "/home/user1/uWebSocket/src"
 "."
+"/usr/include/libxml2"
 )
 
 target_link_libraries(app PUBLIC

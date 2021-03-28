@@ -3,7 +3,18 @@
 #include <fstream>
 #include <streambuf>
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 #include "svg_drawing.h"
+
+namespace {
+
+    void parse_svg(const std::string& str_svg)
+    {
+        
+    }
+}
 
 u_svg_drawing::u_svg_drawing()
 {
