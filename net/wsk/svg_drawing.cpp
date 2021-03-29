@@ -12,7 +12,9 @@ namespace {
 
     void parse_svg(const std::string& str_svg)
     {
-        
+        xmlDocPtr doc;
+        doc = xmlReadMemory(str_svg.c_str(), str_svg.size(), "svg.xml", NULL, 0);
+
     }
 }
 
