@@ -28,6 +28,7 @@ target_include_directories(app PUBLIC
 target_link_libraries(app PUBLIC
 pthread
 z
+xml2
 ${USOCKETS_OBJS}
 )
 
