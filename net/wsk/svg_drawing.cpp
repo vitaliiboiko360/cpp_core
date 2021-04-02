@@ -37,13 +37,13 @@ namespace {
 
             if(cur_node->type == XML_ELEMENT_NODE)
             {
-                std::cout<<"name: "<<cur_node->name<<std::endl;
+                std::cout<<"tag \""<<cur_node->name<<"\""<<std::endl;
 
                 xmlAttr* attribute = cur_node->properties;
                 while(attribute)
                 {
-                xmlChar* value = xmlNodeListGetString(cur_node->doc, attribute->children, 1);
-                std::cout<<"\tattr: "<<cur_node->name<<" has content: \""<<value<<"\""<<std::endl;
+                xmlChar* value = xmlNodeListGetRawString(cur_node->doc, attribute->children, 1);
+                std::cout<<"\tattribute \""<<attribute->name<<"\"=\""<<(char*)attribute->children<<"\""<<std::endl;
                 xmlFree(value); 
                 attribute = attribute->next;
                 }
