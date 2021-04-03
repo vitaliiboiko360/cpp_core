@@ -42,8 +42,8 @@ namespace {
                 xmlAttr* attribute = cur_node->properties;
                 while(attribute)
                 {
-                xmlChar* value = xmlNodeListGetRawString(cur_node->doc, attribute->children, 1);
-                std::cout<<"\tattribute \""<<attribute->name<<"\"=\""<<(char*)attribute->children<<"\""<<std::endl;
+                xmlChar* value = xmlNodeListGetString(cur_node->doc, attribute->children, 1);
+                std::cout<<"\tattribute \""<<attribute->name<<"\"=\""<<value<<"\""<<std::endl;
                 xmlFree(value); 
                 attribute = attribute->next;
                 }
@@ -69,6 +69,14 @@ namespace {
     void parse_svg(const std::string& str_svg)
     {
         xmlDocPtr doc;
+        doc = xmlReadMemory(str_svg.c_str(), str_svg.size(), "svg.xml", NULL, 0);
+        
+        if(!doc)
+        {
+            return;
+        }
+
+        xmlNode *root_element = xmlDocGetRootElement(doc);
     }
 }
 
