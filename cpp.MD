@@ -1,4 +1,10 @@
+#### std::optional<>
+```cpp
+std::optional<int> asInt(const std::string& s)
+{
+    try return std::stoid(s);
 
+```
 
 #### transform()
 ```cpp
