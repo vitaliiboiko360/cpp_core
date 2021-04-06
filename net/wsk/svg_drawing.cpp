@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
+#include <vector>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -66,17 +67,51 @@ namespace {
         print_xml_elements_attributes(root_element);
     }
 
+    struct svg_data
+    {
+       std::string _name;
+       std::string _value;
+    };
+    
     void parse_svg(const std::string& str_svg)
     {
+
+        std::vector<svg_data> resutls;
         xmlDocPtr doc;
         doc = xmlReadMemory(str_svg.c_str(), str_svg.size(), "svg.xml", NULL, 0);
         
         if(!doc)
         {
+            std::cout<<"error parsing doc=nullptr\n";
             return;
         }
 
         xmlNode *root_element = xmlDocGetRootElement(doc);
+
+        xmlNode *outer_node = NULL;
+        xmlNode *inner_node = NULL;
+        outer_node = root_element;   
+
+        while(outer_node)
+        {
+            inner_node = outer_node;
+            while(inner_node)
+            {
+                if(inner_node->type == XML_ELEMENT_NODE)
+                {
+                    xmlAttr* attribute = inner_node->properties;
+                    while(attribute)
+                    {
+                        xmlChar* value = xmlNodeListGetString(inner_node->doc, attribute->children, 1);
+                        std::cout<<"\tattribute \""<<attribute->name<<"\"=\""<<value<<"\""<<std::endl;
+                        xmlFree(value); 
+                        attribute = attribute->next;
+                    }
+                }
+                inner_node = inner_node->next;
+            }
+            outer_node = outer_node->children;
+        }
     }
 }
 
