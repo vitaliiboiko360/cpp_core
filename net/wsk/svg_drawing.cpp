@@ -99,6 +99,7 @@ namespace {
             {
                 if(inner_node->type == XML_ELEMENT_NODE)
                 {
+                    std::cout<<"node "<<inner_node->name<<std::endl;
                     xmlAttr* attribute = inner_node->properties;
                     while(attribute)
                     {
@@ -126,7 +127,7 @@ u_svg_drawing::u_svg_drawing()
     file.seekg(0, std::ios::beg);
     _svg.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
     
-    print_svg(_svg);
+    parse_svg(_svg);
 }
 
 
