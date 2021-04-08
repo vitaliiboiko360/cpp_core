@@ -2,8 +2,30 @@
 ```cpp
 std::optional<int> asInt(const std::string& s)
 {
-    try return std::stoid(s);
+    try
+    {
+        return std::stoi(s)
+    }
+    catch(...)
+    {
+        return std::nullptr;
+    }
+}
 
+int main()
+{
+    for(auto s : {"42", " 077", "good", "0x33"})
+    {
+        if(oi)
+        {
+            std::cout<<"covnert '"<<s<<"' to int: "<<*oi<<"\n;
+        }
+        else
+        {
+            std::cout<<"cant's convert '"<<s<<"' to int\n";
+        }
+    }
+}
 ```
 
 #### transform()
