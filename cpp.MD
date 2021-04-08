@@ -16,6 +16,7 @@ int main()
 {
     for(auto s : {"42", " 077", "good", "0x33"})
     {
+        std::optional<int> oi = asInt(s);
         if(oi)
         {
             std::cout<<"covnert '"<<s<<"' to int: "<<*oi<<"\n;
