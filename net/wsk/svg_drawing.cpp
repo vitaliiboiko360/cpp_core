@@ -3,6 +3,10 @@
 #include <fstream>
 #include <streambuf>
 #include <vector>
+#include <map>
+#include <errno.h>
+#include <stdlib.h>
+#include <limits.h>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -67,16 +71,36 @@ namespace {
         print_xml_elements_attributes(root_element);
     }
 
-    struct svg_data
+    typedef union 
     {
-       std::string _name;
-       std::string _value;
+        std::string _string;
+        int64_t _number;
+    } attribute_union;
+
+    enum attribute_type
+    {
+        number = 1,
+        string = 2
+    };
+    
+    typedef struct attribute_value
+    {
+        attribute_type _type;
+        attribute_union _value;
+    } attribute_value;
+
+    struct node
+    {
+        int8_t _layer;
+        std::string _name;
+        std::map<std::string, attribute_value> _attributes;
+        std::string _content;
     };
     
     void parse_svg(const std::string& str_svg)
     {
 
-        std::vector<svg_data> resutls;
+        std::vector<node> results;
         xmlDocPtr doc;
         doc = xmlReadMemory(str_svg.c_str(), str_svg.size(), "svg.xml", NULL, 0);
         
@@ -91,7 +115,7 @@ namespace {
         xmlNode *outer_node = NULL;
         xmlNode *inner_node = NULL;
         outer_node = root_element;   
-
+        int current_layer = 0;
         while(outer_node)
         {
             inner_node = outer_node;
@@ -99,18 +123,58 @@ namespace {
             {
                 if(inner_node->type == XML_ELEMENT_NODE)
                 {
-                    std::cout<<"node "<<inner_node->name<<std::endl;
+                    node nd;
+                    nd._layer = current_layer;
+                    nd._name.assign((char*)inner_node->name);
+                    nd._content.assign((char*)inner_node->content);
+               
                     xmlAttr* attribute = inner_node->properties;
                     while(attribute)
                     {
                         xmlChar* value = xmlNodeListGetString(inner_node->doc, attribute->children, 1);
-                        std::cout<<"\tattribute \""<<attribute->name<<"\"=\""<<value<<"\""<<std::endl;
+                        //std::cout<<"\tattribute \""<<attribute->name<<"\"=\""<<value<<"\""<<std::endl;
+                        
+                        std::string attribute_name{ (char*)attribute->name };
+                        std::string str_attr_value{ (char*)value };
+
+                        char* p = nullptr;
+                        errno = 0;
+                        long n = 0;
+                        n = strtol(str_attr_value.c_str(), &p, 10);
+                        if ((errno == ERANGE && (n == LONG_MAX || n == LONG_MIN)) || (errno != 0 && n == 0))
+                        {
+                            std::cout<<"strtol error\n";    
+                        }
+
+                        attribute_value attr_value;
+                        attribute_union attr_union;
+
+                        if(*p == '\0')
+                        {
+                            attr_value._type = attribute_type::number;  
+                            attr_union._number = n;
+                        }                    
+                        else
+                        {
+                            attr_value._type = attribute_type::string;  
+                            attr_union._string = str_attr_value;
+                        }
+
+  
+                        attr_value._value = attr_union;
+
+                        nd._attributes[attribute_name] = attr_value;    
+
                         xmlFree(value); 
                         attribute = attribute->next;
                     }
+
+                    results.push_back(nd);
                 }
                 inner_node = inner_node->next;
+
             }
+            current_layer++;
             outer_node = outer_node->children;
         }
     }
