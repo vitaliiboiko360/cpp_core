@@ -71,23 +71,23 @@ namespace {
         print_xml_elements_attributes(root_element);
     }
 
-    typedef union 
+    union attribute_union 
     {
         std::string _string;
         int64_t _number;
-    } attribute_union;
+    };
 
     enum attribute_type
     {
+        none = 0,
         number = 1,
-        string = 2
+        string = 2,
     };
     
-    typedef struct attribute_value
+    struct attribute_value
     {
         attribute_type _type;
-        attribute_union _value;
-    } attribute_value;
+    };
 
     struct node
     {
@@ -160,9 +160,7 @@ namespace {
                             attr_union._string = str_attr_value;
                         }
 
-  
                         attr_value._value = attr_union;
-
                         nd._attributes[attribute_name] = attr_value;    
 
                         xmlFree(value); 
