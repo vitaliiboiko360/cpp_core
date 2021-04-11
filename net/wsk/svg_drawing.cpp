@@ -71,29 +71,29 @@ namespace {
         print_xml_elements_attributes(root_element);
     }
 
-    union attribute_union 
+    union atrbt_data 
     {
-        std::string _string;
+        char* _string;
         int64_t _number;
     };
 
-    enum attribute_type
+    enum atrbt_type
     {
         none = 0,
         number = 1,
         string = 2,
     };
     
-    struct attribute_value
+    struct atrbt_value
     {
-        attribute_type _type;
+        atrbt_type _type;
     };
 
     struct node
     {
         int8_t _layer;
         std::string _name;
-        std::map<std::string, attribute_value> _attributes;
+        std::map<std::string, atrbt_value> _attributes;
         std::string _content;
     };
     
@@ -132,7 +132,6 @@ namespace {
                     while(attribute)
                     {
                         xmlChar* value = xmlNodeListGetString(inner_node->doc, attribute->children, 1);
-                        //std::cout<<"\tattribute \""<<attribute->name<<"\"=\""<<value<<"\""<<std::endl;
                         
                         std::string attribute_name{ (char*)attribute->name };
                         std::string str_attr_value{ (char*)value };
@@ -144,24 +143,7 @@ namespace {
                         if ((errno == ERANGE && (n == LONG_MAX || n == LONG_MIN)) || (errno != 0 && n == 0))
                         {
                             std::cout<<"strtol error\n";    
-                        }
-
-                        attribute_value attr_value;
-                        attribute_union attr_union;
-
-                        if(*p == '\0')
-                        {
-                            attr_value._type = attribute_type::number;  
-                            attr_union._number = n;
-                        }                    
-                        else
-                        {
-                            attr_value._type = attribute_type::string;  
-                            attr_union._string = str_attr_value;
-                        }
-
-                        attr_value._value = attr_union;
-                        nd._attributes[attribute_name] = attr_value;    
+                        } 
 
                         xmlFree(value); 
                         attribute = attribute->next;
