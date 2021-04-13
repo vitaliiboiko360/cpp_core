@@ -102,7 +102,7 @@ namespace {
                     std::cout<<"assing\n";
                     nd.name.assign((char*)inner_node->name);
                     std::cout<<"assing\n";
-                    if(!inner_node->content)
+                    if(inner_node->content)
                     {
                         nd.content.assign((char*)inner_node->content);
                     }
