@@ -99,9 +99,9 @@ namespace {
                 if(inner_node->type == XML_ELEMENT_NODE)
                 {
                     node nd;
-                    std::cout<<"assing\n";
+                    
                     nd.name.assign((char*)inner_node->name);
-                    std::cout<<"assing\n";
+
                     if(inner_node->content)
                     {
                         nd.content.assign((char*)inner_node->content);
@@ -113,7 +113,7 @@ namespace {
                         xmlChar* value = xmlNodeListGetString(inner_node->doc, attribute->children, 1);
                         
                         std::string key{(char*)attribute->name};
-                        std::cout<<"map[]\n";
+
                         nd.attributes[key] = {(char*)value};
 
                         xmlFree(value); 
