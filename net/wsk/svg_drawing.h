@@ -1,6 +1,8 @@
 
 #include <string>
 
+#include "node.h"
+
 class u_svg_drawing
 {
 public:
@@ -9,4 +11,5 @@ public:
 
 private:
     std::string _svg;
+    std::vector<node> _nodes;
 };

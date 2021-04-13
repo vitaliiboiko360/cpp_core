@@ -12,6 +12,7 @@
 #include <libxml/tree.h>
 
 #include "svg_drawing.h"
+#include "node.h"
 
 namespace {
 
@@ -70,34 +71,8 @@ namespace {
 
         print_xml_elements_attributes(root_element);
     }
-
-    union atrbt_data 
-    {
-        char* _string;
-        int64_t _number;
-    };
-
-    enum atrbt_type
-    {
-        none = 0,
-        number = 1,
-        string = 2,
-    };
     
-    struct atrbt_value
-    {
-        atrbt_type _type;
-    };
-
-    struct node
-    {
-        int8_t _layer;
-        std::string _name;
-        std::map<std::string, atrbt_value> _attributes;
-        std::string _content;
-    };
-    
-    void parse_svg(const std::string& str_svg)
+    std::vector<node> parse_svg(const std::string& str_svg)
     {
 
         std::vector<node> results;
@@ -107,7 +82,7 @@ namespace {
         if(!doc)
         {
             std::cout<<"error parsing doc=nullptr\n";
-            return;
+            return {};
         }
 
         xmlNode *root_element = xmlDocGetRootElement(doc);
@@ -124,26 +99,22 @@ namespace {
                 if(inner_node->type == XML_ELEMENT_NODE)
                 {
                     node nd;
-                    nd._layer = current_layer;
-                    nd._name.assign((char*)inner_node->name);
-                    nd._content.assign((char*)inner_node->content);
-               
+                    std::cout<<"assing\n";
+                    nd.name.assign((char*)inner_node->name);
+                    std::cout<<"assing\n";
+                    if(!inner_node->content)
+                    {
+                        nd.content.assign((char*)inner_node->content);
+                    }
+
                     xmlAttr* attribute = inner_node->properties;
                     while(attribute)
                     {
                         xmlChar* value = xmlNodeListGetString(inner_node->doc, attribute->children, 1);
                         
-                        std::string attribute_name{ (char*)attribute->name };
-                        std::string str_attr_value{ (char*)value };
-
-                        char* p = nullptr;
-                        errno = 0;
-                        long n = 0;
-                        n = strtol(str_attr_value.c_str(), &p, 10);
-                        if ((errno == ERANGE && (n == LONG_MAX || n == LONG_MIN)) || (errno != 0 && n == 0))
-                        {
-                            std::cout<<"strtol error\n";    
-                        } 
+                        std::string key{(char*)attribute->name};
+                        std::cout<<"map[]\n";
+                        nd.attributes[key] = {(char*)value};
 
                         xmlFree(value); 
                         attribute = attribute->next;
@@ -157,6 +128,8 @@ namespace {
             current_layer++;
             outer_node = outer_node->children;
         }
+
+        return results;
     }
 }
 
@@ -171,7 +144,7 @@ u_svg_drawing::u_svg_drawing()
     file.seekg(0, std::ios::beg);
     _svg.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
     
-    parse_svg(_svg);
+    _nodes = parse_svg(_svg);
 }
 
 
