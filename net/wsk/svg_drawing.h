@@ -9,7 +9,7 @@ public:
     u_svg_drawing();
     std::string get_svg();
 
-private:
+// private:
     std::string _svg;
     std::vector<node> _nodes;
 };

@@ -119,6 +119,11 @@ int main()
     }};
 
     u_svg_drawing svg_1;
+
+    for(const auto&  n : svg_1._nodes)
+    {
+        std::cout<<n.name<<std::endl;
+    }
     
     while(true)
     {

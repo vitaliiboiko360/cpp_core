@@ -113,7 +113,6 @@ namespace {
                         xmlChar* value = xmlNodeListGetString(inner_node->doc, attribute->children, 1);
                         
                         std::string key{(char*)attribute->name};
-
                         nd.attributes[key] = {(char*)value};
 
                         xmlFree(value); 
