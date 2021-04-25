@@ -8,6 +8,8 @@
 #include<errno.h> //For errno - the error number
 #include<netinet/udp.h>	//Provides declarations for udp header
 #include<netinet/ip.h>	//Provides declarations for ip header
+#include <linux/if_packet.h>
+#include <net/ethernet.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 
@@ -53,7 +55,7 @@ unsigned short csum(unsigned short *ptr,int nbytes)
 int main (void)
 {
 	//Create a raw socket of type IPPROTO
-	int s = socket (AF_INET, SOCK_RAW, IPPROTO_RAW);
+	int s = socket (AF_PACKET, SOCK_RAW, htons(ETH_P_IP));
 	
 	if(s == -1)
 	{
@@ -129,10 +131,10 @@ int main (void)
 	while (1)
 	{
 		//Send the packet
-		if (sendto (s, datagram, iph->tot_len ,	0, (struct sockaddr *) &sin, sizeof (sin)) < 0)
-		{
-			perror("sendto failed");
-		}
+		// if (sendto (s, datagram, iph->tot_len ,	0, (struct sockaddr *) &sin, sizeof (sin)) < 0)
+		// {
+		// 	perror("sendto failed");
+		// }
 		//Data send successfully
 		else
 		{
